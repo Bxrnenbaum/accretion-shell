@@ -2,6 +2,7 @@ import QtQuick
 import Quickshell
 import Quickshell.Io
 import Quickshell.Wayland
+import "widgets"
 
 ShellRoot {
   Variants {
@@ -11,10 +12,10 @@ ShellRoot {
       required property var modelData
 
       screen: modelData
-      implicitHeight: 36
+      implicitHeight: 30
 
       WlrLayershell.layer: WlrLayer.Top
-      WlrLayershell.exclusiveZone: 36
+      WlrLayershell.exclusiveZone: 24
 
       visible: true
       color: "transparent"
@@ -28,8 +29,8 @@ ShellRoot {
 
       margins {
         top: 4
-        left: 8
-        right: 8
+        left: 5
+        right: 5
       }
 
       property bool hasBattery: false
@@ -40,12 +41,15 @@ ShellRoot {
         onExited: code => hasBattery = (code === 0)
       }
 
-      Rectangle {
-        anchors.fill: parent
-        color: "black"
-        border.color: "#2a526e"
-        radius: 12
 
+      BatteryWidget {
+        visible: hasBattery
+
+        anchors {
+          left: parent.left
+          top: parent.top
+          leftMargin: 2
+        }
       }
     }
   }
