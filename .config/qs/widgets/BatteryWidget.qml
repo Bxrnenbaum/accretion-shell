@@ -1,68 +1,93 @@
 import QtQuick
-import QtQuick.Effects
+import QtQuick.Controls
 import Quickshell
 import Quickshell.Io
+import QtQuick.Effects
 
-Rectangle {
-    id: batteryWidget
+import "../" as RootDir
 
-    property int capacity: 0
-    property string status: ""
-    readonly property bool charging: status === "Charging"
+Item {
+  id: batteryWidget
 
-    implicitWidth: 64
-    implicitHeight: 28
+  property int capacity: 0
+  property string status: ""
+  readonly property bool charging: status === "Charging"
+
+  implicitHeight: 32
+  implicitWidth: 120
+
+  Rectangle {
+    id: bg
+    anchors.fill: parent
 
     color: "#0b1b26"
-    border.color: hoverHandler.hovered ? "#E3C9A3" : "#2a526e"
-    border.width: 2
-    radius: 16
+
+    topLeftRadius: 0
+    topRightRadius: 0
+    bottomLeftRadius: height / 2
+    bottomRightRadius: height / 2
 
     Behavior on border.color {
-        ColorAnimation { duration: 100 }
-      }
-
-
-    HoverHandler {
-        id: hoverHandler
+      ColorAnimation { duration: 100 }
     }
 
-    layer.enabled: true
-    layer.effect: MultiEffect {
-        shadowEnabled: true
-        shadowColor: "#99000000"
-        shadowBlur: 0.8            // 0.0 to 1.0
-        shadowVerticalOffset: 4
-        shadowHorizontalOffset: 0
-    }
+    HoverHandler { id: hoverHandler }
 
     Text {
-        anchors.centerIn: parent
-        font.family: "monospace"
-        font.pixelSize: 16
-        color: "#F2E8D5"
-        text: (batteryWidget.charging ? "⚡ " : "") + batteryWidget.capacity + "%"
+      anchors.centerIn: parent
+      font.family: RootDir.Fonts.text
+      font.pixelSize: 16
+      color: "#F2E8D5"
+      text: (batteryWidget.charging ? "⚡ " : "") + batteryWidget.capacity + "%"
     }
 
     Timer {
-        interval: 30000
-        running: true
-        repeat: true
-        triggeredOnStart: true
-        onTriggered: batteryProcess.running = true
+      interval: 30000
+      running: true
+      repeat: true
+      triggeredOnStart: true
+      onTriggered: batteryProcess.running = true
     }
 
     Process {
-        id: batteryProcess
+      id: batteryProcess
 
-        command: ["sh", "-c", "cat /sys/class/power_supply/BAT1/capacity /sys/class/power_supply/BAT1/status"]
+      command: ["sh", "-c", `
+      for d in /sys/class/power_supply/*; do
+      [ "$(cat "$d/type" 2>/dev/null)" = "Battery" ] || continue
+      [ "$(cat "$d/scope" 2>/dev/null)" = "Device" ] && continue
+      cat "$d/capacity" "$d/status"
+      exit 0
+      done
+      exit 1
+      `]
 
-        stdout: StdioCollector {
-            onStreamFinished: {
-                const lines = this.text.trim().split("\n");
-                batteryWidget.capacity = parseInt(lines[0]);
-                batteryWidget.status = lines[1];
-            }
+      stdout: StdioCollector {
+        onStreamFinished: {
+          const lines = this.text.trim().split("\n");
+          const cap = parseInt(lines[0]);
+          if (!isNaN(cap)) {
+            batteryWidget.capacity = cap;
+            batteryWidget.status = lines[1] ?? "";
+          }
         }
+      }
     }
+
+    // siblings of bg, so the shadow layer doesn't clip them
+    RootDir.ConcaveCorner {
+      radius: dateWidget.height / 2
+      color: bg.color
+      mirrored: true
+      x: -width
+      y: 0
+    }
+
+    RootDir.ConcaveCorner {
+      radius: dateWidget.height / 2
+      color: bg.color
+      x: dateWidget.width
+      y: 0
+    }
+  }
 }

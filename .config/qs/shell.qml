@@ -12,10 +12,10 @@ ShellRoot {
       required property var modelData
 
       screen: modelData
-      implicitHeight: 30
+      implicitHeight: 40
 
       WlrLayershell.layer: WlrLayer.Top
-      WlrLayershell.exclusiveZone: 24
+      WlrLayershell.exclusiveZone: 32
 
       visible: true
       color: "transparent"
@@ -27,29 +27,43 @@ ShellRoot {
         bottom: false
       }
 
-      margins {
-        top: 4
-        left: 5
-        right: 5
-      }
-
       property bool hasBattery: false
 
       Process {
         running: true
-        command: ["test", "-f", "/sys/class/power_supply/BAT1/capacity"]
+        command: ["sh", "-c", `
+        for d in /sys/class/power_supply/*; do
+        [ "$(cat "$d/type" 2>/dev/null)" = "Battery" ] || continue
+        [ "$(cat "$d/scope" 2>/dev/null)" = "Device" ] && continue
+        exit 0
+        done
+        exit 1
+        `]
         onExited: code => hasBattery = (code === 0)
       }
 
-
-      BatteryWidget {
-        visible: hasBattery
-
+      Row {
         anchors {
-          left: parent.left
           top: parent.top
-          leftMargin: 2
+          right: parent.right
+          rightMargin: 16
         }
+        spacing: 60   // spacing > 2 * radius
+
+        WeatherWidget {}
+        DateWidget {}
+      }
+
+      Row {
+        anchors {
+          top: parent.top
+          left: parent.left
+          leftMargin: 16
+        }
+        spacing: 60
+
+        BatteryWidget { visible: hasBattery }
+        MusicWidget {}
       }
     }
   }
