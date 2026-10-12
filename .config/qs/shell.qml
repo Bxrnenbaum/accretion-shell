@@ -12,7 +12,7 @@ ShellRoot {
       required property var modelData
 
       screen: modelData
-      implicitHeight: 40
+      implicitHeight: Math.max(38, leftRow.height)
 
       WlrLayershell.layer: WlrLayer.Top
       WlrLayershell.exclusiveZone: 32
@@ -42,7 +42,13 @@ ShellRoot {
         onExited: code => hasBattery = (code === 0)
       }
 
+      mask: Region {
+        Region { item: leftRow }
+        Region { item: rightRow }
+      }
+
       Row {
+        id: rightRow
         anchors {
           top: parent.top
           right: parent.right
@@ -55,6 +61,7 @@ ShellRoot {
       }
 
       Row {
+        id: leftRow
         anchors {
           top: parent.top
           left: parent.left
@@ -63,7 +70,9 @@ ShellRoot {
         spacing: 60
 
         BatteryWidget { visible: hasBattery }
-        MusicWidget {}
+        MusicWidget {
+
+        }
       }
     }
   }

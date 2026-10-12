@@ -5,18 +5,30 @@ import Quickshell
 import Quickshell.Services.Mpris
 
 import "../" as RootDir
+import "../windows"
 
 Item {
   id: musicWidget
 
-  implicitHeight: 32
+  implicitHeight: extended ? 300 : 32
   implicitWidth: 420
 
   property var lastPlaying: null
   property var pinned: null
 
+  property bool extended: false
+
   readonly property bool isPlaying: player !== null && player.playbackState === MprisPlaybackState.Playing
   readonly property real progress: (player && player.length > 0) ? Math.min(1, player.position / player.length) : 0
+
+  readonly property real collapsedHeight: 32
+  readonly property real baseRadius: collapsedHeight / 2
+  readonly property real radiusExponent: 0.4
+
+  readonly property real cornerRadius: Math.min(
+    height / 2,
+    baseRadius * Math.pow(Math.max(height, collapsedHeight) / collapsedHeight, radiusExponent)
+  )
 
   property var player: {
     const list = Mpris.players.values;
@@ -57,13 +69,16 @@ Item {
 
     topLeftRadius: 0
     topRightRadius: 0
-    bottomLeftRadius: height / 2
-    bottomRightRadius: height / 2
+    bottomLeftRadius: musicWidget.cornerRadius
+    bottomRightRadius: musicWidget.cornerRadius
 
     RowLayout {
-      anchors.fill: parent
-      anchors.leftMargin: bg.height / 2
-      anchors.rightMargin: bg.height / 2
+      anchors.left: parent.left
+      anchors.right: parent.right
+      anchors.top: parent.top
+      height: 32
+      anchors.leftMargin: 16
+      anchors.rightMargin: 16
       spacing: 10
 
       Text {
@@ -107,6 +122,20 @@ Item {
         font.family: RootDir.Fonts.text
         font.pixelSize: 14
         color: "#F2E8D5"
+
+        MouseArea {
+          anchors.fill: parent
+          acceptedButtons: Qt.LeftButton | Qt.RightButton
+          cursorShape: Qt.PointingHandCursor
+
+          onClicked: (mouse) => {
+            if (mouse.button === Qt.LeftButton) {
+              musicWidget.extended = !musicWidget.extended
+              return;
+            }
+          }
+
+        }
       }
 
       Repeater {
@@ -168,7 +197,7 @@ Item {
   }
 
   RootDir.ConcaveCorner {
-    radius: bg.height / 2
+    radius: cornerRadius
     color: bg.color
     mirrored: true
     x: -width
@@ -176,7 +205,7 @@ Item {
   }
 
   RootDir.ConcaveCorner {
-    radius: bg.height / 2
+    radius: cornerRadius
     color: bg.color
     x: musicWidget.width
     y: 0
