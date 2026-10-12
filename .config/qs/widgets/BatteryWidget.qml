@@ -14,7 +14,7 @@ Item {
   readonly property bool charging: status === "Charging"
 
   implicitHeight: 32
-  implicitWidth: 120
+  implicitWidth: 80
 
   Rectangle {
     id: bg
@@ -76,7 +76,7 @@ Item {
 
     // siblings of bg, so the shadow layer doesn't clip them
     RootDir.ConcaveCorner {
-      radius: dateWidget.height / 2
+      radius: batteryWidget.height / 2
       color: bg.color
       mirrored: true
       x: -width
@@ -84,9 +84,9 @@ Item {
     }
 
     RootDir.ConcaveCorner {
-      radius: dateWidget.height / 2
+      radius: batteryWidget.height / 2
       color: bg.color
-      x: dateWidget.width
+      x: batteryWidget.width
       y: 0
     }
   }

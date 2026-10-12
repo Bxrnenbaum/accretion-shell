@@ -125,6 +125,13 @@ Item {
     onTriggered: weatherWidget.refresh()
   }
 
+  Timer {
+    interval: weatherWidget.refreshMinutes * 2000
+    repeat: true
+    running: weatherWidget.failed
+    onTriggered: weatherWidget.refresh()
+  }
+
   Rectangle {
     id: bg
     anchors.fill: parent

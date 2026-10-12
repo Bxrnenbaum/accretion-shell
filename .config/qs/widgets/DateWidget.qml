@@ -36,7 +36,7 @@ Item {
       font.pixelSize: 15
       font.bold: true
       color: "#F2E8D5"
-
+ 
       Timer {
         interval: 1000
         running: true
