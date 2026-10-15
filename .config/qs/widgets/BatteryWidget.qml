@@ -27,12 +27,6 @@ Item {
     bottomLeftRadius: height / 2
     bottomRightRadius: height / 2
 
-    Behavior on border.color {
-      ColorAnimation { duration: 100 }
-    }
-
-    HoverHandler { id: hoverHandler }
-
     Text {
       anchors.centerIn: parent
       font.family: RootDir.Fonts.text
@@ -74,7 +68,6 @@ Item {
       }
     }
 
-    // siblings of bg, so the shadow layer doesn't clip them
     RootDir.ConcaveCorner {
       radius: batteryWidget.height / 2
       color: bg.color

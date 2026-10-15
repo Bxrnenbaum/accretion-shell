@@ -3,6 +3,7 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import Quickshell
 import Quickshell.Services.Mpris
+import Quickshell.Hyprland
 
 import "../" as RootDir
 import "../windows"
@@ -10,13 +11,13 @@ import "../windows"
 Item {
   id: musicWidget
 
-  implicitHeight: extended ? 300 : 32
+  implicitHeight: expanded ? 300 : 32
   implicitWidth: 420
 
   property var lastPlaying: null
   property var pinned: null
 
-  property bool extended: false
+  property bool expanded: false
 
   readonly property bool isPlaying: player !== null && player.playbackState === MprisPlaybackState.Playing
   readonly property real progress: (player && player.length > 0) ? Math.min(1, player.position / player.length) : 0
@@ -29,6 +30,10 @@ Item {
     height / 2,
     baseRadius * Math.pow(Math.max(height, collapsedHeight) / collapsedHeight, radiusExponent)
   )
+
+  Behavior on implicitHeight {
+    NumberAnimation { duration: 150; easing.type: Easing.InOutQuad }
+  }
 
   property var player: {
     const list = Mpris.players.values;
@@ -130,7 +135,7 @@ Item {
 
           onClicked: (mouse) => {
             if (mouse.button === Qt.LeftButton) {
-              musicWidget.extended = !musicWidget.extended
+              musicWidget.expanded = !musicWidget.expanded
               return;
             }
           }
@@ -209,5 +214,11 @@ Item {
     color: bg.color
     x: musicWidget.width
     y: 0
+  }
+
+  HyprlandFocusGrab {
+    windows: [ musicWidget.QsWindow.window ]
+    active: musicWidget.expanded
+    onCleared: musicWidget.expanded = false
   }
 }

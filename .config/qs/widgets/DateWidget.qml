@@ -36,7 +36,7 @@ Item {
       font.pixelSize: 15
       font.bold: true
       color: "#F2E8D5"
- 
+
       Timer {
         interval: 1000
         running: true
@@ -56,7 +56,6 @@ Item {
     }
   }
 
-  // siblings of bg, so the shadow layer doesn't clip them
   RootDir.ConcaveCorner {
     radius: dateWidget.height / 2 + 1
     color: bg.color

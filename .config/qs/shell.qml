@@ -12,7 +12,7 @@ ShellRoot {
       required property var modelData
 
       screen: modelData
-      implicitHeight: Math.max(38, leftRow.height)
+      implicitHeight: modelData.height
 
       WlrLayershell.layer: WlrLayer.Top
       WlrLayershell.exclusiveZone: 32
@@ -43,36 +43,30 @@ ShellRoot {
       }
 
       mask: Region {
-        Region { item: leftRow }
-        Region { item: rightRow }
+        Region { item: weather }
+        Region { item: date }
+        Region { item: wifi }
+        Region { item: battery; }
+        Region { item: music }
       }
 
       Row {
         id: rightRow
-        anchors {
-          top: parent.top
-          right: parent.right
-          rightMargin: 16
-        }
-        spacing: 60   // spacing > 2 * radius
+        anchors { top: parent.top; right: parent.right; rightMargin: 16 }
+        spacing: 60
 
-        WeatherWidget {}
-        DateWidget {}
+        WeatherWidget { id: weather }
+        DateWidget { id: date }
+        WifiWidget { id: wifi }
       }
 
       Row {
         id: leftRow
-        anchors {
-          top: parent.top
-          left: parent.left
-          leftMargin: 16
-        }
+        anchors { top: parent.top; left: parent.left; leftMargin: 16 }
         spacing: 60
 
-        BatteryWidget { visible: hasBattery }
-        MusicWidget {
-
-        }
+        BatteryWidget { id: battery; visible: hasBattery }
+        MusicWidget { id: music }
       }
     }
   }
