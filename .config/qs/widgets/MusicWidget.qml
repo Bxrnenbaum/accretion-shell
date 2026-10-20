@@ -12,7 +12,10 @@ Item {
   id: musicWidget
 
   implicitHeight: expanded ? 300 : 32
-  implicitWidth: 420
+  
+  property real bodyWidth: 420
+
+  implicitWidth: bodyWidth + cornerRadius * 2
 
   property var lastPlaying: null
   property var pinned: null
@@ -47,7 +50,6 @@ Item {
     return list.find(p => p.identity === "Spotify") ?? list[0] ?? null;
   }
 
-  // remember whichever player started playing most recently
   Instantiator {
     model: Mpris.players
     delegate: Connections {
@@ -69,7 +71,9 @@ Item {
 
   Rectangle {
     id: bg
-    anchors.fill: parent
+    x: musicWidget.cornerRadius
+    width: musicWidget.bodyWidth
+    height: parent.height
     color: "#0b1b26"
 
     topLeftRadius: 0
@@ -187,11 +191,11 @@ Item {
 
     // progress bar
     Rectangle {
-      x: bg.height / 2
+      x: musicWidget.cornerRadius
       y: bg.height - height - 2
       height: 2
       radius: 1
-      width: (bg.width - bg.height) * musicWidget.progress
+      width: (bg.width - musicWidget.cornerRadius * 2) * musicWidget.progress
       color: "#F8f8D5"
       opacity: 0.6
 
@@ -202,17 +206,17 @@ Item {
   }
 
   RootDir.ConcaveCorner {
-    radius: cornerRadius
+    radius: musicWidget.cornerRadius
     color: bg.color
     mirrored: true
-    x: -width
+    x: 0
     y: 0
   }
 
   RootDir.ConcaveCorner {
-    radius: cornerRadius
+    radius: musicWidget.cornerRadius
     color: bg.color
-    x: musicWidget.width
+    x: musicWidget.width - musicWidget.cornerRadius
     y: 0
   }
 

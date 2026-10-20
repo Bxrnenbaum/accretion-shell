@@ -9,19 +9,24 @@ import "../" as RootDir
 Item {
   id: dateWidget
 
+  property real bodyWidth: 140
+  readonly property real cornerRadius: height / 2
+
   implicitHeight: 32
-  implicitWidth: 140
+  implicitWidth: bodyWidth + cornerRadius * 2
 
   Rectangle {
     id: bg
-    anchors.fill: parent
+    x: dateWidget.cornerRadius
+    width: dateWidget.bodyWidth
+    height: parent.height
 
     color: "#0b1b26"
 
     topLeftRadius: 0
     topRightRadius: 0
-    bottomLeftRadius: height / 2
-    bottomRightRadius: height / 2
+    bottomLeftRadius: dateWidget.cornerRadius
+    bottomRightRadius: dateWidget.cornerRadius
 
     Behavior on border.color {
       ColorAnimation { duration: 100 }
@@ -57,17 +62,17 @@ Item {
   }
 
   RootDir.ConcaveCorner {
-    radius: dateWidget.height / 2 + 1
+    radius: dateWidget.cornerRadius
     color: bg.color
     mirrored: true
-    x: -width
+    x: 0
     y: 0
   }
 
   RootDir.ConcaveCorner {
-    radius: dateWidget.height / 2 + 1
+    radius: dateWidget.cornerRadius
     color: bg.color
-    x: dateWidget.width
+    x: dateWidget.width - dateWidget.cornerRadius
     y: 0
   }
 }

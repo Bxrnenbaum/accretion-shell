@@ -7,8 +7,11 @@ import "../" as RootDir
 Item {
   id: weatherWidget
 
+  property real bodyWidth: 340
+  readonly property real cornerRadius: height / 2
+
   implicitHeight: 32
-  implicitWidth: 340
+  implicitWidth: bodyWidth + cornerRadius * 2
 
   // Vienna by default
   property real latitude: 48.21
@@ -134,13 +137,15 @@ Item {
 
   Rectangle {
     id: bg
-    anchors.fill: parent
+    x: weatherWidget.cornerRadius
+    width: weatherWidget.bodyWidth
+    height: parent.height
     color: "#0b1b26"
 
     topLeftRadius: 0
     topRightRadius: 0
-    bottomLeftRadius: height / 2
-    bottomRightRadius: height / 2
+    bottomLeftRadius: weatherWidget.cornerRadius
+    bottomRightRadius: weatherWidget.cornerRadius
 
     RowLayout {
       anchors.fill: parent
@@ -231,17 +236,17 @@ Item {
   }
 
   RootDir.ConcaveCorner {
-    radius: bg.height / 2
+    radius: weatherWidget.cornerRadius
     color: bg.color
     mirrored: true
-    x: -width
+    x: 0
     y: 0
   }
 
   RootDir.ConcaveCorner {
-    radius: bg.height / 2
+    radius: weatherWidget.cornerRadius
     color: bg.color
-    x: weatherWidget.width
+    x: weatherWidget.width - weatherWidget.cornerRadius
     y: 0
   }
 }

@@ -2,7 +2,6 @@ import QtQuick
 import QtQuick.Controls
 import Quickshell
 import Quickshell.Io
-import QtQuick.Effects
 
 import "../" as RootDir
 
@@ -13,19 +12,24 @@ Item {
   property string status: ""
   readonly property bool charging: status === "Charging"
 
+  property real bodyWidth: 80
+  readonly property real cornerRadius: height / 2
+
   implicitHeight: 32
-  implicitWidth: 80
+  implicitWidth: bodyWidth + cornerRadius * 2
 
   Rectangle {
     id: bg
-    anchors.fill: parent
+    x: batteryWidget.cornerRadius
+    width: batteryWidget.bodyWidth
+    height: parent.height
 
     color: "#0b1b26"
 
     topLeftRadius: 0
     topRightRadius: 0
-    bottomLeftRadius: height / 2
-    bottomRightRadius: height / 2
+    bottomLeftRadius: batteryWidget.cornerRadius
+    bottomRightRadius: batteryWidget.cornerRadius
 
     Text {
       anchors.centerIn: parent
@@ -34,53 +38,53 @@ Item {
       color: "#F2E8D5"
       text: (batteryWidget.charging ? "⚡ " : "") + batteryWidget.capacity + "%"
     }
+  }
 
-    Timer {
-      interval: 30000
-      running: true
-      repeat: true
-      triggeredOnStart: true
-      onTriggered: batteryProcess.running = true
-    }
+  RootDir.ConcaveCorner {
+    radius: batteryWidget.cornerRadius
+    color: bg.color
+    mirrored: true
+    x: 0
+    y: 0
+  }
 
-    Process {
-      id: batteryProcess
+  RootDir.ConcaveCorner {
+    radius: batteryWidget.cornerRadius
+    color: bg.color
+    x: batteryWidget.width - batteryWidget.cornerRadius
+    y: 0
+  }
 
-      command: ["sh", "-c", `
-      for d in /sys/class/power_supply/*; do
-      [ "$(cat "$d/type" 2>/dev/null)" = "Battery" ] || continue
-      [ "$(cat "$d/scope" 2>/dev/null)" = "Device" ] && continue
-      cat "$d/capacity" "$d/status"
-      exit 0
-      done
-      exit 1
-      `]
+  Timer {
+    interval: 30000
+    running: true
+    repeat: true
+    triggeredOnStart: true
+    onTriggered: batteryProcess.running = true
+  }
 
-      stdout: StdioCollector {
-        onStreamFinished: {
-          const lines = this.text.trim().split("\n");
-          const cap = parseInt(lines[0]);
-          if (!isNaN(cap)) {
-            batteryWidget.capacity = cap;
-            batteryWidget.status = lines[1] ?? "";
-          }
+  Process {
+    id: batteryProcess
+
+    command: ["sh", "-c", `
+    for d in /sys/class/power_supply/*; do
+    [ "$(cat "$d/type" 2>/dev/null)" = "Battery" ] || continue
+    [ "$(cat "$d/scope" 2>/dev/null)" = "Device" ] && continue
+    cat "$d/capacity" "$d/status"
+    exit 0
+    done
+    exit 1
+    `]
+
+    stdout: StdioCollector {
+      onStreamFinished: {
+        const lines = this.text.trim().split("\n");
+        const cap = parseInt(lines[0]);
+        if (!isNaN(cap)) {
+          batteryWidget.capacity = cap;
+          batteryWidget.status = lines[1] ?? "";
         }
       }
-    }
-
-    RootDir.ConcaveCorner {
-      radius: batteryWidget.height / 2
-      color: bg.color
-      mirrored: true
-      x: -width
-      y: 0
-    }
-
-    RootDir.ConcaveCorner {
-      radius: batteryWidget.height / 2
-      color: bg.color
-      x: batteryWidget.width
-      y: 0
     }
   }
 }

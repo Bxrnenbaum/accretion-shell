@@ -52,8 +52,8 @@ ShellRoot {
 
       Row {
         id: rightRow
-        anchors { top: parent.top; right: parent.right; rightMargin: 16 }
-        spacing: 60
+        anchors { top: parent.top; right: parent.right; rightMargin: 0 }
+        spacing: 8
 
         WeatherWidget { id: weather }
         DateWidget { id: date }
@@ -62,8 +62,8 @@ ShellRoot {
 
       Row {
         id: leftRow
-        anchors { top: parent.top; left: parent.left; leftMargin: 16 }
-        spacing: 60
+        anchors { top: parent.top; left: parent.left; leftMargin: 0 }
+        spacing: 8
 
         BatteryWidget { id: battery; visible: hasBattery }
         MusicWidget { id: music }
