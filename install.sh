@@ -1,31 +1,13 @@
 #!/usr/bin/env bash
 # accretion-shell installer
 # Installs everything under ./.config into $XDG_CONFIG_HOME (default ~/.config).
+#
+# Local:  ./install.sh [options]
+# Remote: curl -fsSL https://raw.githubusercontent.com/Bxrnenbaum/accretion-shell/main/install.sh | bash -s -- [options]
 set -euo pipefail
 
 REPO_URL="https://github.com/Bxrnenbaum/accretion-shell.git"
 CLONE_DIR="${XDG_DATA_HOME:-$HOME/.local/share}/accretion-shell"
-
-SCRIPT_PATH="${BASH_SOURCE[0]:-}"
-REPO_DIR=""
-if [[ -n "$SCRIPT_PATH" && -f "$SCRIPT_PATH" ]]; then
-  REPO_DIR="$(cd "$(dirname "$SCRIPT_PATH")" && pwd)"
-fi
-
-if [[ -z "$REPO_DIR" || ! -d "$REPO_DIR/.config" ]]; then
-  command -v git >/dev/null || {
-    echo "git is required" >&2
-    exit 1
-  }
-  if [[ -d "$CLONE_DIR/.git" ]]; then
-    git -C "$CLONE_DIR" pull --ff-only
-  else
-    git clone --depth 1 "$REPO_URL" "$CLONE_DIR"
-  fi
-  exec bash "$CLONE_DIR/install.sh" "$@" </dev/tty
-fi
-
-SRC="$REPO_DIR/.config"
 DEST="${XDG_CONFIG_HOME:-$HOME/.config}"
 BACKUP="$DEST/accretion-backup-$(date +%Y%m%d-%H%M%S)"
 
@@ -38,20 +20,23 @@ DRY=0
 DEPS=1
 YES=0
 UNINSTALL=0
+REPO_DIR=""
+SRC=""
 
 usage() {
-  cat <<EOF
+  cat <<USAGE
 Usage: ./install.sh [options]
 
   --copy        Copy files instead of symlinking them to this repo
   --dry-run     Print what would happen, change nothing
+                (when run via curl, the repo is still cloned first)
   --no-deps     Skip dependency check/installation
-  --yes, -y     Don't ask for confirmation
+  --yes, -y     Don't ask for confirmation (required without a terminal)
   --uninstall   Remove symlinks created by this script (copies are left alone)
   --help, -h    Show this help
 
 Existing files are moved to a timestamped backup directory, never deleted.
-EOF
+USAGE
 }
 
 log() { printf '\033[1;34m::\033[0m %s\n' "$*"; }
@@ -69,28 +54,6 @@ run() {
   fi
 }
 
-while (($#)); do
-  case "$1" in
-  --copy) MODE=copy ;;
-  --dry-run) DRY=1 ;;
-  --no-deps) DEPS=0 ;;
-  --yes | -y) YES=1 ;;
-  --uninstall) UNINSTALL=1 ;;
-  --help | -h)
-    usage
-    exit 0
-    ;;
-  *)
-    usage
-    die "unknown option: $1"
-    ;;
-  esac
-  shift
-done
-
-((EUID != 0)) || die "Do not run as root; sudo is used only when installing packages."
-[[ -d "$SRC" ]] || die "Cannot find $SRC (run this script from the repo)."
-
 is_local_file() {
   local rel="$1" f
   for f in "${LOCAL_FILES[@]}"; do [[ "$f" == "$rel" ]] && return 0; done
@@ -103,38 +66,23 @@ repo_files() {
   done
 }
 
-# uninstall
-if ((UNINSTALL)); then
-  log "Removing symlinks that point into $SRC"
-  while IFS= read -r -d '' rel; do
-    target="$DEST/$rel"
-    if is_local_file "$rel"; then continue; fi
-    if [[ -L "$target" && "$(readlink -- "$target")" == "$SRC/$rel" ]]; then
-      run rm -- "$target"
-    fi
-  done < <(repo_files)
-  log "Done. Local files (e.g. hyprlandLocal.lua) and any backups were left untouched."
-  exit 0
-fi
-
-# dependencies
 install_deps_arch() {
-  local missing=() p
+  local missing=() p ans
   for p in "${ARCH_PKGS[@]}"; do
     pacman -Qq "$p" &>/dev/null || missing+=("$p")
   done
-  ((${#missing[@]})) || {
+  if ((${#missing[@]} == 0)); then
     log "All dependencies already installed."
     return
-  }
+  fi
 
   log "Missing packages: ${missing[*]}"
   if ((!YES && !DRY)); then
     read -r -p "Install them now? [Y/n] " ans
-    [[ "${ans:-Y}" =~ ^[Yy]$ ]] || {
+    if [[ ! "${ans:-Y}" =~ ^[Yy]$ ]]; then
       warn "Skipping dependency install."
       return
-    }
+    fi
   fi
 
   if command -v paru &>/dev/null; then
@@ -162,64 +110,149 @@ check_deps() {
     warn "Please make sure these are installed: ${ARCH_PKGS[*]}"
   fi
 
-  command -v Hyprland &>/dev/null || command -v hyprland &>/dev/null ||
+  if ! command -v Hyprland &>/dev/null && ! command -v hyprland &>/dev/null; then
     warn "Hyprland not found in PATH. hyprland.lua requires a version with Lua config support."
+  fi
 }
 
-((DEPS)) && check_deps
+bootstrap() {
+  local script_path="${BASH_SOURCE[0]:-}"
+  if [[ -n "$script_path" && -f "$script_path" ]]; then
+    REPO_DIR="$(cd "$(dirname "$script_path")" && pwd)"
+  fi
+  if [[ -n "$REPO_DIR" && -d "$REPO_DIR/.config" ]]; then
+    return
+  fi
 
-# install
-log "Source:      $SRC"
-log "Destination: $DEST"
-log "Mode:        $MODE"
-if ((!YES && !DRY)); then
-  read -r -p "Proceed? [Y/n] " ans
-  [[ "${ans:-Y}" =~ ^[Yy]$ ]] || die "Aborted."
-fi
+  command -v git >/dev/null || die "git is required."
+  if [[ -d "$CLONE_DIR/.git" ]]; then
+    git -C "$CLONE_DIR" pull --ff-only
+  else
+    git clone --depth 1 "$REPO_URL" "$CLONE_DIR"
+  fi
 
-backed_up=0
-while IFS= read -r -d '' rel; do
-  src="$SRC/$rel"
-  target="$DEST/$rel"
+  if [[ -r /dev/tty ]]; then
+    exec bash "$CLONE_DIR/install.sh" "$@" </dev/tty
+  else
+    exec bash "$CLONE_DIR/install.sh" "$@"
+  fi
+}
 
-  if is_local_file "$rel"; then
-    if [[ -e "$target" ]]; then
-      log "Keeping existing local file: $rel"
+do_uninstall() {
+  local rel target
+  log "Removing symlinks that point into $SRC"
+  while IFS= read -r -d '' rel; do
+    target="$DEST/$rel"
+    is_local_file "$rel" && continue
+    if [[ -L "$target" && "$(readlink -- "$target")" == "$SRC/$rel" ]]; then
+      run rm -- "$target"
+    fi
+  done < <(repo_files)
+  log "Done. Local files (e.g. hyprlandLocal.lua) and any backups were left untouched."
+}
+
+do_install() {
+  local rel src target backed_up=0 ans scripts_dir
+
+  log "Source:      $SRC"
+  log "Destination: $DEST"
+  log "Mode:        $MODE"
+  if ((!YES && !DRY)); then
+    read -r -p "Proceed? [Y/n] " ans
+    [[ "${ans:-Y}" =~ ^[Yy]$ ]] || die "Aborted."
+  fi
+
+  while IFS= read -r -d '' rel; do
+    src="$SRC/$rel"
+    target="$DEST/$rel"
+
+    if is_local_file "$rel"; then
+      if [[ -e "$target" ]]; then
+        log "Keeping existing local file: $rel"
+        continue
+      fi
+      run mkdir -p -- "$(dirname "$target")"
+      run cp -- "$src" "$target"
+      log "Created local file: $rel"
       continue
     fi
+
+    if [[ -L "$target" && "$(readlink -- "$target")" == "$src" ]]; then
+      continue
+    fi
+
+    if [[ "$MODE" == copy && -f "$target" && ! -L "$target" ]] && cmp -s "$src" "$target"; then
+      continue
+    fi
+
+    if [[ -e "$target" || -L "$target" ]]; then
+      run mkdir -p -- "$BACKUP/$(dirname "$rel")"
+      run mv -- "$target" "$BACKUP/$rel"
+      backed_up=1
+    fi
+
     run mkdir -p -- "$(dirname "$target")"
-    run cp -- "$src" "$target"
-    log "Created local file: $rel"
-    continue
-  fi
+    if [[ "$MODE" == link ]]; then
+      run ln -s -- "$src" "$target"
+    else
+      run cp -- "$src" "$target"
+    fi
+  done < <(repo_files)
 
-  if [[ -L "$target" && "$(readlink -- "$target")" == "$src" ]]; then
-    continue
-  fi
-
-  if [[ -e "$target" || -L "$target" ]]; then
-    run mkdir -p -- "$BACKUP/$(dirname "$rel")"
-    run mv -- "$target" "$BACKUP/$rel"
-    backed_up=1
-  fi
-
-  run mkdir -p -- "$(dirname "$target")"
   if [[ "$MODE" == link ]]; then
-    run ln -s -- "$src" "$target"
+    scripts_dir="$SRC/hypr/scripts"
   else
-    run cp -- "$src" "$target"
+    scripts_dir="$DEST/hypr/scripts"
   fi
-done < <(repo_files)
+  if [[ -d "$scripts_dir" ]]; then
+    run find "$scripts_dir" -type f -name '*.sh' -exec chmod +x {} +
+  fi
 
-if [[ -d "$SRC/hypr/scripts" ]]; then
+  if ((backed_up)); then
+    log "Previous files were moved to: $BACKUP"
+  fi
+  log "Done. Log out and back into Hyprland (or reload it) to apply."
   if [[ "$MODE" == link ]]; then
-    run chmod +x "$SRC"/hypr/scripts/*.sh
-  else
-    run chmod +x "$DEST"/hypr/scripts/*.sh
+    log "Symlink mode: keep $SRC in place, your config points into it."
   fi
-fi
+}
 
-((backed_up)) && log "Previous files were moved to: $BACKUP"
-log "Done. Log out and back into Hyprland (or reload it) to apply."
-[[ "$MODE" == link ]] && log "Symlink mode: keep this repo in place, the config points into it."
-exit 0
+main() {
+  local orig_args=("$@")
+
+  while (($#)); do
+    case "$1" in
+    --copy) MODE=copy ;;
+    --dry-run) DRY=1 ;;
+    --no-deps) DEPS=0 ;;
+    --yes | -y) YES=1 ;;
+    --uninstall) UNINSTALL=1 ;;
+    --help | -h)
+      usage
+      exit 0
+      ;;
+    *)
+      usage
+      die "unknown option: $1"
+      ;;
+    esac
+    shift
+  done
+
+  ((EUID != 0)) || die "Do not run as root; sudo is used only when installing packages."
+
+  bootstrap "${orig_args[@]}"
+  SRC="$REPO_DIR/.config"
+
+  if ((UNINSTALL)); then
+    do_uninstall
+    exit 0
+  fi
+
+  if ((DEPS)); then
+    check_deps
+  fi
+  do_install
+}
+
+main "$@"
