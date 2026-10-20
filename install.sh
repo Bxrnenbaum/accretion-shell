@@ -3,7 +3,28 @@
 # Installs everything under ./.config into $XDG_CONFIG_HOME (default ~/.config).
 set -euo pipefail
 
-REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_URL="https://github.com/Bxrnenbaum/accretion-shell.git"
+CLONE_DIR="${XDG_DATA_HOME:-$HOME/.local/share}/accretion-shell"
+
+SCRIPT_PATH="${BASH_SOURCE[0]:-}"
+REPO_DIR=""
+if [[ -n "$SCRIPT_PATH" && -f "$SCRIPT_PATH" ]]; then
+  REPO_DIR="$(cd "$(dirname "$SCRIPT_PATH")" && pwd)"
+fi
+
+if [[ -z "$REPO_DIR" || ! -d "$REPO_DIR/.config" ]]; then
+  command -v git >/dev/null || {
+    echo "git is required" >&2
+    exit 1
+  }
+  if [[ -d "$CLONE_DIR/.git" ]]; then
+    git -C "$CLONE_DIR" pull --ff-only
+  else
+    git clone --depth 1 "$REPO_URL" "$CLONE_DIR"
+  fi
+  exec bash "$CLONE_DIR/install.sh" "$@" </dev/tty
+fi
+
 SRC="$REPO_DIR/.config"
 DEST="${XDG_CONFIG_HOME:-$HOME/.config}"
 BACKUP="$DEST/accretion-backup-$(date +%Y%m%d-%H%M%S)"
