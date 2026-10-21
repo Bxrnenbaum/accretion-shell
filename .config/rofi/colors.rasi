@@ -1,0 +1,26 @@
+/* Accretion Shell — shared Rofi palette */
+
+* {
+    /* Base */
+    bg:              rgba(14, 30, 40, 0.97);
+    surface:         rgba(111, 179, 217, 0.07);
+    surface-hover:   rgba(111, 179, 217, 0.12);
+
+    /* Borders */
+    border:          rgba(74, 122, 148, 0.30);
+    input-border:    rgba(74, 122, 148, 0.22);
+
+    /* Text */
+    fg:              #DCEEF5;
+    cream:           #F5EBDC;
+    muted:           #7896A9;
+
+    /* Accents */
+    accent:          #6FB3D9;
+    accent-dark:     #4A7A94;
+
+    /* Selection */
+    selected:        rgba(111, 179, 217, 0.15);
+    active-selected: rgba(111, 179, 217, 0.24);
+    urgent-selected: rgba(90, 130, 160, 0.18);
+}
