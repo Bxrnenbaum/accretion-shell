@@ -1,3 +1,5 @@
+local T = require("HyprlandTheme")
+
 return {
 	apps = {
 		terminal = "kitty",
@@ -42,25 +44,25 @@ return {
 		general = {
 			gaps_in = 5,
 			gaps_out = 8,
-			border_size = 2,
+			border_size = T.borderSize,
 			col = {
-				active_border = { colors = { "rgba(F5E9D6ff)", "rgba(E3C9A3ff)" }, angle = 45 },
-				inactive_border = { colors = { "rgba(2a526eff)", "rgba(061c26ff)" }, angle = 45 },
+				active_border = { colors = { T.colors.fg, T.colors.warning }, angle = T.borderGradientAngle },
+				inactive_border = { colors = { T.colors.border, T.colors.bg }, angle = T.borderGradientAngle },
 			},
 			resize_on_border = true,
 			allow_tearing = false,
 			layout = "dwindle",
 		},
 		decoration = {
-			rounding = 12,
-			rounding_power = 2,
+			rounding = T.rounding,
+			rounding_power = T.roundingPower,
 			active_opacity = 1.0,
 			inactive_opacity = 1.0,
 			shadow = {
 				enabled = true,
 				range = 15,
 				render_power = 3,
-				color = "rgba(00000066)",
+				color = T.shadowColor,
 			},
 			blur = {
 				enabled = false,
@@ -101,7 +103,7 @@ return {
 		columns = 3,
 		gaps_in = 8,
 		gaps_out = 16,
-		bg_col = "rgba(0e2120ff)",
+		bg_col = T.colors.bgSecondary,
 		workspace_method = "first 1",
 	},
 

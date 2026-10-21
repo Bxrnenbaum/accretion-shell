@@ -41,10 +41,10 @@ Item {
     baseRadius * Math.pow(Math.max(height, collapsedHeight) / collapsedHeight, radiusExponent)
   )
 
-  readonly property color fg: "#F2E8D5"
-  readonly property color fgDim: "#8a9aa5"
-  readonly property color rowBg: "#12293a"
-  readonly property color accent: "#2d6a8f"
+  readonly property color fg: RootDir.Theme.fg
+  readonly property color fgDim: RootDir.Theme.fgMuted
+  readonly property color rowBg: RootDir.Theme.bg
+  readonly property color accent: RootDir.Theme.accent
   readonly property string fontFamily: "Monaspace Argon Frozen"
 
   Behavior on implicitHeight {
@@ -257,9 +257,9 @@ Item {
   component PillButton: Rectangle {
     id: btn
     property string text: ""
-    property color fg: "white"
-    property color baseColor: "#12293a"
-    property color hoverColor: "#2d6a8f"
+    property color fg: RootDir.Theme.fg
+    property color baseColor: RootDir.Theme.bg
+    property color hoverColor: RootDir.Theme.accent
     property string fontFamily: ""
     signal clicked()
 
@@ -296,7 +296,7 @@ Item {
     width: wifiWidget.bodyWidth
     height: parent.height
 
-    color: "#0b1b26"
+    color: RootDir.Theme.bg
 
     topLeftRadius: 0
     topRightRadius: 0
@@ -385,7 +385,7 @@ Item {
               visible: wifiWidget.pendingEnterprise
               text: wifiWidget.eapMethod === "ttls" ? "TTLS/PAP" : "PEAP/MSCHAPv2"
               fg: wifiWidget.fg
-              baseColor: "#0b1b26"
+              baseColor: RootDir.Theme.bg
               hoverColor: wifiWidget.accent
               fontFamily: wifiWidget.fontFamily
               implicitHeight: 20
@@ -461,7 +461,7 @@ Item {
           height: 38
           radius: 10
           color: modelData.active ? wifiWidget.accent
-               : rowArea.containsMouse ? "#1a3a50" : wifiWidget.rowBg
+               : rowArea.containsMouse ? RootDir.Theme.bgElevated : wifiWidget.rowBg
 
           Behavior on color { ColorAnimation { duration: 100 } }
 

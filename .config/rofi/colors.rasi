@@ -1,26 +1,25 @@
-/* Accretion Shell — shared Rofi palette */
-
 * {
-    /* Base */
-    bg:              rgba(14, 30, 40, 0.97);
-    surface:         rgba(111, 179, 217, 0.07);
-    surface-hover:   rgba(111, 179, 217, 0.12);
-
-    /* Borders */
-    border:          rgba(74, 122, 148, 0.30);
-    input-border:    rgba(74, 122, 148, 0.22);
-
-    /* Text */
-    fg:              #DCEEF5;
-    cream:           #F5EBDC;
-    muted:           #7896A9;
-
-    /* Accents */
-    accent:          #6FB3D9;
-    accent-dark:     #4A7A94;
-
-    /* Selection */
-    selected:        rgba(111, 179, 217, 0.15);
-    active-selected: rgba(111, 179, 217, 0.24);
-    urgent-selected: rgba(90, 130, 160, 0.18);
+	bg: #1F3B4E;
+	surface: #252B38;
+	fg: #F2E8D5;
+	cream: #F2E8D5;
+	muted: #7F9AAE;
+	accent: #89B4FA;
+	border: #343C4D;
+	input-border: #343C4D;
+	selected: #252B38;
+	active-selected: #89B4FA;
+	urgent-selected: #C97B7B;
+	font: "sans 11";
+	prompt-font: "monospace Bold 11";
+	window-width: 45%;
+	window-radius: 24px 24px 0px 0px;
+	window-padding: 18px;
+	input-radius: 12px;
+	input-padding: 12px 14px;
+	panel-spacing: 12px;
+	list-padding: 2px 0px;
+	element-padding: 9px 12px;
+	element-radius: 10px;
+	icon-size: 26px;
 }

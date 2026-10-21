@@ -1,0 +1,23 @@
+return {
+	colors = {
+		bg = "{{color.bg}}",
+		bgSecondary = "{{color.bgSecondary}}",
+		bgElevated = "{{color.bgElevated}}",
+		fg = "{{color.fg}}",
+		fgMuted = "{{color.fgMuted}}",
+		accent = "{{color.accent}}",
+		accentHover = "{{color.accentHover}}",
+		border = "{{color.border}}",
+		success = "{{color.success}}",
+		warning = "{{color.warning}}",
+		error = "{{color.error}}",
+		weatherBg = "{{color.weatherBg}}",
+		weatherFg = "{{color.weatherFg}}",
+		weatherMuted = "{{color.weatherMuted}}",
+	},
+	borderSize = 2,
+	borderGradientAngle = 45,
+	rounding = 12,
+	roundingPower = 2,
+	shadowColor = "rgba(00000066)",
+}

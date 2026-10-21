@@ -21,7 +21,7 @@ Item {
     width: dateWidget.bodyWidth
     height: parent.height
 
-    color: "#0b1b26"
+    color: RootDir.Theme.bg
 
     topLeftRadius: 0
     topRightRadius: 0
@@ -40,7 +40,7 @@ Item {
       font.family: RootDir.Fonts.text
       font.pixelSize: 15
       font.bold: true
-      color: "#F2E8D5"
+      color: RootDir.Theme.fg
 
       Timer {
         interval: 1000

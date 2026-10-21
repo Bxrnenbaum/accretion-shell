@@ -1,0 +1,23 @@
+return {
+	colors = {
+		bg = "#1F3B4E",
+		bgSecondary = "#151820",
+		bgElevated = "#252B38",
+		fg = "#F2E8D5",
+		fgMuted = "#7F9AAE",
+		accent = "#89B4FA",
+		accentHover = "#A6C8FF",
+		border = "#343C4D",
+		success = "#A6E3A1",
+		warning = "#F9E2AF",
+		error = "#C97B7B",
+		weatherBg = "#0B1B26",
+		weatherFg = "#F2E8D5",
+		weatherMuted = "#7F9AAE",
+	},
+	borderSize = 2,
+	borderGradientAngle = 45,
+	rounding = 12,
+	roundingPower = 2,
+	shadowColor = "rgba(00000066)",
+}

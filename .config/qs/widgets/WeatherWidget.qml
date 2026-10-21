@@ -140,7 +140,7 @@ Item {
     x: weatherWidget.cornerRadius
     width: weatherWidget.bodyWidth
     height: parent.height
-    color: "#0b1b26"
+    color: RootDir.Theme.bg
 
     topLeftRadius: 0
     topRightRadius: 0
@@ -159,7 +159,7 @@ Item {
         text: weatherWidget.loaded ? weatherWidget.condition.icon : "\ue374"
         font.family: RootDir.Fonts.icons
         font.pixelSize: 16
-        color: "#F2E8D5"
+        color: RootDir.Theme.fg
       }
 
       // temperature
@@ -171,7 +171,7 @@ Item {
         font.family: RootDir.Fonts.text
         font.pixelSize: 14
         font.bold: true
-        color: "#F2E8D5"
+        color: RootDir.Theme.fg
       }
 
       // description
@@ -186,7 +186,7 @@ Item {
         elide: Text.ElideRight
         font.family: RootDir.Fonts.text
         font.pixelSize: 12
-        color: weatherWidget.failed ? "#C97B7B" : "#7F9AAE"
+        color: weatherWidget.failed ? RootDir.Theme.error : RootDir.Theme.fgMuted
 
         MouseArea {
           anchors.fill: parent
@@ -207,7 +207,7 @@ Item {
         : "feels " + weatherWidget.round1(weatherWidget.feelsLike) + "°"
         font.family: RootDir.Fonts.text
         font.pixelSize: 12
-        color: "#7F9AAE"
+        color: RootDir.Theme.fgMuted
       }
 
       // humidity
@@ -221,7 +221,7 @@ Item {
           text: "\uf043" // droplet
           font.family: RootDir.Fonts.icons
           font.pixelSize: 12
-          color: "#7F9AAE"
+          color: RootDir.Theme.fgMuted
         }
 
         Text {
@@ -229,7 +229,7 @@ Item {
           text: weatherWidget.humidity + "%"
           font.family: RootDir.Fonts.text
           font.pixelSize: 12
-          color: "#7F9AAE"
+          color: RootDir.Theme.fgMuted
         }
       }
     }

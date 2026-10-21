@@ -24,7 +24,7 @@ Item {
     width: batteryWidget.bodyWidth
     height: parent.height
 
-    color: "#0b1b26"
+    color: RootDir.Theme.bg
 
     topLeftRadius: 0
     topRightRadius: 0
@@ -35,7 +35,7 @@ Item {
       anchors.centerIn: parent
       font.family: RootDir.Fonts.text
       font.pixelSize: 16
-      color: "#F2E8D5"
+      color: RootDir.Theme.fg
       text: (batteryWidget.charging ? "⚡ " : "") + batteryWidget.capacity + "%"
     }
   }

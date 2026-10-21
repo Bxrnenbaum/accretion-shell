@@ -1,10 +1,11 @@
 import QtQuick
 import QtQuick.Shapes
+import "." as RootDir
 
 Item {
   id: root
   required property int radius
-  property color color: "black"
+  property color color: RootDir.Theme.bg
   property bool mirrored: false   // true for the right-hand side
   property real bleed: 1          // overlap into the attached object to hide seams
 

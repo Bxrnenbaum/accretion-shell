@@ -3,7 +3,7 @@
 @import "~/.config/rofi/colors.rasi"
 
 * {
-    font: "sans 11";
+    font: @font;
     background-color: transparent;
     text-color: @fg;
 }
@@ -14,20 +14,20 @@ window {
     x-offset: 0px;
     y-offset: 0px;
 
-    width: 45%;
+    width: @window-width;
 
     background-color: @bg;
     border: 1px;
     border-color: @border;
-    border-radius: 24px 24px 0px 0px;
-    padding: 18px;
+    border-radius: @window-radius;
+    padding: @window-padding;
 
     transparency: "real";
 }
 
 mainbox {
     background-color: transparent;
-    spacing: 12px;
+    spacing: @panel-spacing;
     children: [ inputbar, listview ];
 }
 
@@ -35,15 +35,15 @@ inputbar {
     background-color: @surface;
     border: 1px;
     border-color: @input-border;
-    border-radius: 12px;
-    padding: 12px 14px;
+    border-radius: @input-radius;
+    padding: @input-padding;
     spacing: 12px;
     children: [ prompt, entry ];
 }
 
 prompt {
     text-color: @cream;
-    font: "monospace Bold 11";
+    font: @prompt-font;
 }
 
 entry {
@@ -57,7 +57,7 @@ listview {
     columns: 1;
     lines: 8;
     spacing: 3px;
-    padding: 2px 0px;
+    padding: @list-padding;
     scrollbar: false;
     dynamic: true;
     fixed-height: false;
@@ -66,11 +66,11 @@ listview {
 
 element {
     orientation: horizontal;
-    padding: 9px 12px;
+    padding: @element-padding;
     spacing: 12px;
     border: 1px;
     border-color: transparent;
-    border-radius: 10px;
+    border-radius: @element-radius;
     background-color: transparent;
     children: [ element-icon, element-text ];
 }
@@ -107,7 +107,7 @@ element selected.urgent {
 }
 
 element-icon {
-    size: 26px;
+    size: @icon-size;
     background-color: transparent;
     vertical-align: 0.5;
 }

@@ -74,7 +74,7 @@ Item {
     x: musicWidget.cornerRadius
     width: musicWidget.bodyWidth
     height: parent.height
-    color: "#0b1b26"
+    color: RootDir.Theme.bg
 
     topLeftRadius: 0
     topRightRadius: 0
@@ -100,7 +100,7 @@ Item {
         elide: Text.ElideRight
         font.family: RootDir.Fonts.text
         font.pixelSize: 12
-        color: "#7F9AAE"
+        color: RootDir.Theme.fgMuted
 
         MouseArea {
           anchors.fill: parent
@@ -130,7 +130,7 @@ Item {
         elide: Text.ElideRight
         font.family: RootDir.Fonts.text
         font.pixelSize: 14
-        color: "#F2E8D5"
+        color: RootDir.Theme.fg
 
         MouseArea {
           anchors.fill: parent
@@ -163,7 +163,7 @@ Item {
           : modelData.glyph
           font.pixelSize: 15
           font.family: RootDir.Fonts.icon
-          color: btnArea.containsMouse ? "#FFFFFF" : "#F2E8D5"
+          color: btnArea.containsMouse ? RootDir.Theme.accentHover : RootDir.Theme.fg
           scale: btnArea.containsMouse ? 1.15 : 1
 
           Behavior on scale {
@@ -196,7 +196,7 @@ Item {
       height: 2
       radius: 1
       width: (bg.width - musicWidget.cornerRadius * 2) * musicWidget.progress
-      color: "#F8f8D5"
+      color: RootDir.Theme.fg
       opacity: 0.6
 
       Behavior on width {
