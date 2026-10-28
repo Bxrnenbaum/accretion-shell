@@ -3,7 +3,17 @@
 ---
 
 ## Screenshots
-<img width="2560" height="1440" alt="image" src="https://github.com/user-attachments/assets/57eaf220-cffc-4d74-add0-9d7d5566fe6a" />
+<img width="1920" height="1080" alt="accretion desktop" src="https://github.com/user-attachments/assets/f4ab3cc9-e431-4df3-8a4d-9439e0bc7797" />
+<img width="1920" height="1080" alt="accretion lockscreen" src="https://github.com/user-attachments/assets/6646e3dd-c727-40c8-8b4c-4fcbf9244f3a" />
+
+>accretion theme
+
+---
+
+<img width="1920" height="1080" alt="limbo desktop" src="https://github.com/user-attachments/assets/6808a03d-1f68-4f9c-a0f6-9019d0f646ad" />
+<img width="1920" height="1080" alt="limbo lockscreen" src="https://github.com/user-attachments/assets/b63599b0-fef2-465e-9d27-f7e9b3190756" />
+
+>limbo theme
 
 ## Installation
 - run `curl -fsSL https://raw.githubusercontent.com/Bxrnenbaum/accretion-shell/main/scripts/bootstrap.sh | bash`
