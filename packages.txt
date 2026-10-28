@@ -4,3 +4,5 @@ hypridle
 quickshell
 rofi
 fontconfig
+hyprpaper
+hyprshot
