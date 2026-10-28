@@ -1,6 +1,6 @@
 return {
 	colors = {
-		bg = "#1F3B4E",
+		bg = "#0B1B26",
 		bgSecondary = "#151820",
 		bgElevated = "#252B38",
 		fg = "#F2E8D5",

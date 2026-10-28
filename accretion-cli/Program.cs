@@ -23,11 +23,11 @@ try
             break;
 
         case "install":
-            Console.WriteLine("Install command not implemented yet.");
+            Install.Run();
             break;
 
         case "uninstall":
-            Console.WriteLine("Uninstall command not implemented yet.");
+            Uninstall.Run();
             break;
 
         case "help":

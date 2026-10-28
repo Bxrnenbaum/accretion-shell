@@ -4,7 +4,7 @@ import QtQuick
 
 QtObject {
     // backgrounds
-    readonly property color bg: "#1F3B4E"
+    readonly property color bg: "#0B1B26"
     readonly property color bgSecondary: "#151820"
     readonly property color bgElevated: "#252B38"
 

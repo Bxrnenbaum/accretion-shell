@@ -1,5 +1,12 @@
 /.config/hypr/hyprlandLocal.lua
 
+accretion-cli/bin/
+accretion-cli/obj/
+
+.config/qs/Theme.qml
+.config/hypr/hyprlandTheme.lua
+.config/rofi/colors.rasi
+
 .env
 .env.*
 !.env.example
@@ -48,8 +55,6 @@ core
 core.*
 
 
-**/bin/
-**/obj/
 *.user
 *.suo
 *.nupkg
