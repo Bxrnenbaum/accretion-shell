@@ -1,3 +1,4 @@
+
 using System.Text.Json;
 using System.Text.RegularExpressions;
 
@@ -19,12 +20,6 @@ public static class Config
         string jsonPath = Path.Combine(cliDir, ThemePath);
 
         Console.WriteLine($"Repository root: {root}");
-
-        if (!File.Exists(jsonPath))
-        {
-            throw new FileNotFoundException(
-                $"Could not find {ThemePath}", jsonPath);
-        }
 
         using JsonDocument document = JsonDocument.Parse(
             File.ReadAllText(jsonPath));
@@ -69,8 +64,7 @@ public static class Config
 
                     string color = value.GetString()!;
 
-                    if (!Regex.IsMatch(
-                        color, @"^#[0-9a-fA-F]{6}$"))
+                    if (!Regex.IsMatch(color, @"^#[0-9a-fA-F]{6}$"))
                     {
                         throw new InvalidOperationException(
                             $"Invalid color '{name}': {color}. Use #RRGGBB.");
@@ -85,7 +79,6 @@ public static class Config
                 Directory.CreateDirectory(outputDirectory);
 
             File.WriteAllText(outputPath, content);
-
             Console.WriteLine($"Applied: {outputPath}");
         }
 
@@ -94,6 +87,22 @@ public static class Config
 
     private static string FindRepoRoot()
     {
+        string home = Environment.GetFolderPath(
+            Environment.SpecialFolder.UserProfile);
+
+        // Check explicit locations first, regardless of the current directory.
+        var candidates = new List<string>();
+
+        string? configuredRoot =
+            Environment.GetEnvironmentVariable("ACCRETION_REPO_DIR");
+
+        if (!string.IsNullOrWhiteSpace(configuredRoot))
+            candidates.Add(configuredRoot);
+
+        candidates.Add(Path.Combine(
+            home, ".local", "share", "accretion-shell"));
+
+        // Also support running the CLI from a cloned development repository.
         foreach (string start in new[]
         {
             Directory.GetCurrentDirectory(),
@@ -105,25 +114,34 @@ public static class Config
 
             while (directory is not null)
             {
-                bool hasGit =
-                    Directory.Exists(Path.Combine(directory.FullName, ".git"))
-                    || File.Exists(Path.Combine(directory.FullName, ".git"));
-
-                bool hasReadme = File.Exists(
-                    Path.Combine(directory.FullName, "README.md"));
-
-                bool hasCliProject = File.Exists(
-                    Path.Combine(directory.FullName,
-                        "accretion-cli", "accretion-cli.csproj"));
-
-                if (hasGit && hasReadme && hasCliProject)
-                    return directory.FullName;
-
+                candidates.Add(directory.FullName);
                 directory = directory.Parent;
             }
         }
 
+        foreach (string candidate in candidates.Distinct())
+        {
+            string root = Path.GetFullPath(candidate);
+
+            if (IsRepoRoot(root))
+                return root;
+        }
+
         throw new DirectoryNotFoundException(
-            "Could not find the Accretion Shell repository root.");
+            "Could not find the Accretion Shell repository. " +
+            "Expected it at ~/.local/share/accretion-shell, " +
+            "in a parent directory, or at ACCRETION_REPO_DIR.");
+    }
+
+    private static bool IsRepoRoot(string path)
+    {
+        return
+            File.Exists(Path.Combine(
+                path, "accretion-cli", "accretion-cli.csproj"))
+            && File.Exists(Path.Combine(
+                path, "accretion-cli", "theme.json"))
+            && Directory.Exists(Path.Combine(
+                path, "accretion-cli", "templates"))
+            && Directory.Exists(Path.Combine(path, ".config"));
     }
 }

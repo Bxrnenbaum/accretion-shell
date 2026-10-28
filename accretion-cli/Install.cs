@@ -1,4 +1,4 @@
-
+using System.Diagnostics;
 using System.Text.Json;
 
 public static class Install
@@ -26,6 +26,8 @@ public static class Install
     {
         string repoRoot = FindRepoRoot();
         string sourceConfig = Path.Combine(repoRoot, ".config");
+
+        InstallDependencies(repoRoot);
 
         if (!Directory.Exists(sourceConfig))
             throw new DirectoryNotFoundException(
@@ -233,6 +235,56 @@ public static class Install
         throw new DirectoryNotFoundException(
             "Could not find the Accretion Shell repository. " +
             "Clone it to ~/.local/share/accretion-shell first.");
+    }
+
+    private static void InstallDependencies(string repoRoot)
+    {
+        string packageFile = Path.Combine(repoRoot, "packages.txt");
+
+        if (!File.Exists(packageFile))
+            throw new FileNotFoundException(
+                "Could not find packages.txt.", packageFile);
+
+        string[] packages = File.ReadAllLines(packageFile)
+            .Select(line => line.Split('#')[0].Trim())
+            .Where(line => !string.IsNullOrWhiteSpace(line))
+            .Distinct()
+            .ToArray();
+
+        if (packages.Length == 0)
+        {
+            Console.WriteLine("No dependencies to install.");
+            return;
+        }
+
+        if (!File.Exists("/usr/bin/pacman"))
+            throw new PlatformNotSupportedException(
+                "Automatic dependency installation currently supports Arch Linux.");
+
+        Console.WriteLine("Installing Accretion Shell dependencies...");
+
+        var startInfo = new ProcessStartInfo
+        {
+            FileName = "sudo",
+            UseShellExecute = false
+        };
+
+        startInfo.ArgumentList.Add("pacman");
+        startInfo.ArgumentList.Add("-S");
+        startInfo.ArgumentList.Add("--needed");
+
+        foreach (string package in packages)
+            startInfo.ArgumentList.Add(package);
+
+        using Process process = Process.Start(startInfo)
+            ?? throw new InvalidOperationException(
+                "Failed to start the package manager.");
+
+        process.WaitForExit();
+
+        if (process.ExitCode != 0)
+            throw new InvalidOperationException(
+                "Dependency installation failed. Accretion was not installed.");
     }
 }
 
