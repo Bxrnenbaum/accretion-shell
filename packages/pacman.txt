@@ -7,6 +7,3 @@ fontconfig
 hyprpaper
 hyprshot
 kitty
-
-#wallr is not available on every distro and its an optional but preferred replacement for hyprpaper. uncomment the line below to use.
-# wallr

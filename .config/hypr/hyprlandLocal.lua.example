@@ -21,7 +21,7 @@ return {
 		"wl-paste --type text --watch cliphist store",
 		"wl-paste --image --watch cliphist store",
 		"hyprpm reload -n",
-		"hyprpaper",
+		"hyprpaper", -- replace with wallr if available
 	},
 
 	env = {

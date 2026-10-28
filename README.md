@@ -23,6 +23,9 @@ in theory this project should be compatible with Arch, Fedora, NixOS and Opensus
 - run `accretion install` to install dependencies etc.
 - run `accretion config apply` to generate the configs using the colors specified in `~/.local/share/accretion-shell/accretion-cli/theme.json` (you can modify this file to change the colors used in the system)
 
+> if wallr is installed, it will be automatically used, as it provides instant reloading and fading animations, which makes it the preferred alternative to hyprpaper. sadly it isnt available on every distro. replacing hyprpaper with wallr in hyprlandLocal.lua is recommended.
+
+
 **disclaimer:** accretion-cli does not know your monitor layout our your preference, so it creates a generic hyprlandLocal.lua file. it is strongly recommended to check it and atleast modify the monitor configuration to your liking. this file is persistent after updateing using `accretion update` and while not be overwritten once created.
 
 ## Usage

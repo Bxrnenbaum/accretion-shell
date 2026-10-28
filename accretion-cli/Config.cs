@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Nodes;
@@ -148,97 +147,7 @@ public static class Config
             Console.WriteLine($"Applied: {outputPath}");
         }
 
-        if (hasImages)
-        {
-            string wallpaper = ResolveImage(
-                images, hasImages, "wallpaper", cliDir);
-
-            ApplyWallpaper(wallpaper);
-        }
-
         Console.WriteLine("Theme applied successfully.");
-    }
-
-
-
-    private static void ApplyWallpaper(string wallpaperPath)
-    {
-        // Wallr is preferred because it supports animated transitions.
-        if (FindExecutable("wallr") is not null)
-        {
-            Console.WriteLine("Using Wallr for wallpaper transitions.");
-
-            RunCommand("wallr", [
-                "set",
-            wallpaperPath,
-            "-e", "fade",
-            "-d", "1200ms"
-            ]);
-
-            return;
-        }
-
-        // Fallback: Hyprpaper is installed through the normal dependencies.
-        if (FindExecutable("hyprctl") is not null)
-        {
-            Console.WriteLine("Wallr not found; using Hyprpaper.");
-
-            RunCommand("hyprctl", [
-                "hyprpaper",
-            "reload",
-            "," + wallpaperPath
-            ]);
-
-            return;
-        }
-
-        Console.WriteLine(
-            "Warning: neither Wallr nor hyprctl was found; " +
-            "the wallpaper config was generated but not applied.");
-    }
-
-    private static string? FindExecutable(string name)
-    {
-        string? path = Environment.GetEnvironmentVariable("PATH");
-
-        if (string.IsNullOrWhiteSpace(path))
-            return null;
-
-        foreach (string directory in path.Split(
-            Path.PathSeparator,
-            StringSplitOptions.RemoveEmptyEntries))
-        {
-            string candidate = Path.Combine(directory, name);
-
-            if (File.Exists(candidate))
-                return candidate;
-        }
-
-        return null;
-    }
-
-    private static void RunCommand(
-        string executable,
-        IEnumerable<string> arguments)
-    {
-        var startInfo = new ProcessStartInfo
-        {
-            FileName = executable,
-            UseShellExecute = false
-        };
-
-        foreach (string argument in arguments)
-            startInfo.ArgumentList.Add(argument);
-
-        using Process process = Process.Start(startInfo)
-            ?? throw new InvalidOperationException(
-                $"Failed to start {executable}.");
-
-        process.WaitForExit();
-
-        if (process.ExitCode != 0)
-            Console.WriteLine(
-                $"Warning: {executable} exited with code {process.ExitCode}.");
     }
 
 
