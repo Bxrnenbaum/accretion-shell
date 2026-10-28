@@ -14,7 +14,7 @@ return {
 	workspaceMonitor = nil,
 
 	autostart = {
-		"qs --path /mnt/Data/github/accretion-shell/.config/qs/",
+		"qs --path .config/qs/",
 		"swaync",
 		"/usr/lib/polkit-kde-authentication-agent-1",
 		"hypridle",
@@ -25,7 +25,6 @@ return {
 	},
 
 	env = {
-		GTK_THEME = "oomox-vortex2",
 		XCURSOR_SIZE = "20",
 		HYPRCURSOR_SIZE = "20",
 		GDK_SCALE = "1",
@@ -34,7 +33,7 @@ return {
 
 	config = {
 		input = {
-			kb_layout = "de",
+			kb_layout = "at",
 			kb_variant = "nodeadkeys",
 			follow_mouse = 1,
 			sensitivity = -0.35,
