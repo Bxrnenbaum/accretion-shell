@@ -224,14 +224,13 @@ hl.bind(mainMod .. " + period", hl.dsp.layout("colresize +0.05"))
 hl.bind(mainMod .. " + comma", hl.dsp.layout("colresize -0.05"))
 hl.bind(mainMod .. " + SHIFT + period", hl.dsp.layout("swapcol r"))
 hl.bind(mainMod .. " + SHIFT + comma", hl.dsp.layout("swapcol l"))
-hl.bind(mainMod .. " + I", hl.dsp.layout("consume"))
-hl.bind(mainMod .. " + O", hl.dsp.layout("expel"))
 
 -- Workspaces 1-10 (number row)
 for i = 1, 9 do
 	hl.bind(mainMod .. " + " .. i, hl.dsp.focus({ workspace = i }))
 	hl.bind(mainMod .. " + SHIFT + " .. i, hl.dsp.window.move({ workspace = i }))
 end
+
 hl.bind(mainMod .. " + 0", hl.dsp.focus({ workspace = 10 }))
 hl.bind(mainMod .. " + SHIFT + 0", hl.dsp.window.move({ workspace = 10 }))
 
@@ -255,11 +254,7 @@ for i, key in ipairs(numpadKeys) do
 	hl.bind(mainMod .. " + SHIFT + " .. key, hl.dsp.window.move({ workspace = workspace }))
 end
 
--- Quickshell
-hl.bind(mainMod .. " + SHIFT + M", hl.dsp.global("quickshell:togglePowerMenu"))
-hl.bind(mainMod .. " + SHIFT + W", hl.dsp.global("quickshell:toggleWifiMenu"))
 
--- Scratchpad
 hl.bind(mainMod .. " + S", hl.dsp.workspace.toggle_special("magic"))
 
 -- Mouse
