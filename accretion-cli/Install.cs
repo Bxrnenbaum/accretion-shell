@@ -22,6 +22,11 @@ public static class Install
         "rofi"
     ];
 
+    private static readonly string[] LocalFiles =
+[
+    ".config/hypr/hyprlandLocal.lua"
+];
+
     public static void Run()
     {
         string repoRoot = FindRepoRoot();
@@ -47,7 +52,6 @@ public static class Install
         foreach (string name in ConfigNames)
         {
             string source = Path.Combine(sourceConfig, name);
-            string destination = Path.Combine(ConfigDirectory, name);
 
             if (!Directory.Exists(source))
             {
@@ -55,73 +59,14 @@ public static class Install
                 continue;
             }
 
-            if (IsCorrectLink(destination, source))
-            {
-                Console.WriteLine($"Already linked: {destination}");
-                continue;
-            }
-
-            if (PathExists(destination))
-            {
-                Directory.CreateDirectory(backupRoot);
-
-                string backup = Path.Combine(backupRoot, name);
-                MovePath(destination, backup);
-
-                Console.WriteLine($"Backed up: {destination} -> {backup}");
-
-                state.Entries.RemoveAll(
-                    entry => entry.LinkPath == destination);
-
-                state.Entries.Add(new InstallEntry
-                {
-                    LinkPath = destination,
-                    SourcePath = source,
-                    BackupPath = backup
-                });
-            }
-            else
-            {
-                state.Entries.RemoveAll(
-                    entry => entry.LinkPath == destination);
-
-                state.Entries.Add(new InstallEntry
-                {
-                    LinkPath = destination,
-                    SourcePath = source,
-                    BackupPath = null
-                });
-            }
-
-            SaveState(state);
-
-            try
-            {
-                Directory.CreateSymbolicLink(destination, source);
-                Console.WriteLine($"Linked: {destination} -> {source}");
-            }
-            catch
-            {
-                // Restore the original path if creating the link fails.
-                InstallEntry? entry = state.Entries.Find(
-                    item => item.LinkPath == destination);
-
-                if (entry?.BackupPath is not null &&
-                    PathExists(entry.BackupPath) &&
-                    !PathExists(destination))
-                {
-                    MovePath(entry.BackupPath, destination);
-                    state.Entries.Remove(entry);
-                    SaveState(state);
-                }
-
-                throw;
-            }
-
-            SaveState(state);
+            LinkWithBackup(
+                state, source, Path.Combine(ConfigDirectory, name), backupRoot);
         }
 
-        // Generate theme files using the existing functionality.
+        InstallFonts(repoRoot, state, backupRoot);
+
+        EnsureLocalFiles(repoRoot);
+
         string previousDirectory = Directory.GetCurrentDirectory();
 
         try
@@ -135,6 +80,134 @@ public static class Install
         }
 
         Console.WriteLine("Accretion Shell installed successfully.");
+    }
+
+    internal static void EnsureLocalFiles(string repoRoot)
+    {
+        foreach (string relative in LocalFiles)
+        {
+            string target = Path.Combine(repoRoot, relative);
+            string example = target + ".example";
+
+            if (File.Exists(target))
+                continue; // never overwrite
+
+            if (!File.Exists(example))
+            {
+                Console.WriteLine($"Warning: missing {relative} and no .example to create it from.");
+                continue;
+            }
+
+            File.Copy(example, target, overwrite: false);
+            Console.WriteLine($"Created local file: {target}");
+        }
+    }
+
+    private static void LinkWithBackup(
+    InstallState state, string source, string destination, string backupRoot)
+    {
+        if (IsCorrectLink(destination, source))
+        {
+            Console.WriteLine($"Already linked: {destination}");
+            return;
+        }
+
+        string name = Path.GetFileName(destination);
+
+        if (PathExists(destination))
+        {
+            Directory.CreateDirectory(backupRoot);
+
+            string backup = Path.Combine(backupRoot, name);
+            MovePath(destination, backup);
+
+            Console.WriteLine($"Backed up: {destination} -> {backup}");
+
+            state.Entries.RemoveAll(e => e.LinkPath == destination);
+            state.Entries.Add(new InstallEntry
+            {
+                LinkPath = destination,
+                SourcePath = source,
+                BackupPath = backup
+            });
+        }
+        else
+        {
+            state.Entries.RemoveAll(e => e.LinkPath == destination);
+            state.Entries.Add(new InstallEntry
+            {
+                LinkPath = destination,
+                SourcePath = source,
+                BackupPath = null
+            });
+        }
+
+        SaveState(state);
+
+        try
+        {
+            Directory.CreateSymbolicLink(destination, source);
+            Console.WriteLine($"Linked: {destination} -> {source}");
+        }
+        catch
+        {
+            InstallEntry? entry = state.Entries.Find(e => e.LinkPath == destination);
+
+            if (entry?.BackupPath is not null &&
+                PathExists(entry.BackupPath) &&
+                !PathExists(destination))
+            {
+                MovePath(entry.BackupPath, destination);
+                state.Entries.Remove(entry);
+                SaveState(state);
+            }
+
+            throw;
+        }
+
+        SaveState(state);
+    }
+
+    private static void InstallFonts(
+        string repoRoot, InstallState state, string backupRoot)
+    {
+        string source = Path.Combine(repoRoot, "fonts");
+
+        if (!Directory.Exists(source))
+        {
+            Console.WriteLine($"Skipping fonts, missing directory: {source}");
+            return;
+        }
+
+        string fontsRoot = Path.Combine(Home, ".local", "share", "fonts");
+        Directory.CreateDirectory(fontsRoot);
+
+        LinkWithBackup(
+            state, source, Path.Combine(fontsRoot, "accretion-shell"), backupRoot);
+
+        RefreshFontCache();
+    }
+
+    internal static void RefreshFontCache()
+    {
+        try
+        {
+            var startInfo = new ProcessStartInfo
+            {
+                FileName = "fc-cache",
+                UseShellExecute = false
+            };
+            startInfo.ArgumentList.Add("-f");
+
+            using Process? process = Process.Start(startInfo);
+            process?.WaitForExit();
+
+            Console.WriteLine("Font cache refreshed.");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Warning: could not run fc-cache: {ex.Message}");
+        }
     }
 
     internal static InstallState LoadState()

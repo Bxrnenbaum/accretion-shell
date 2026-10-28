@@ -1,27 +1,52 @@
-
 {
-  "schemaVersion": 1,
-  "theme": {
-    "name": "Accretion",
-    "colors": {
-      "bg": "#0B1B26",
-      "bgSecondary": "#151820",
-      "bgElevated": "#252B38",
-
-      "fg": "#F2E8D5",
-      "fgMuted": "#7F9AAE",
-
-      "accent": "#89B4FA",
-      "accentHover": "#A6C8FF",
-      "border": "#343C4D",
-
-      "success": "#A6E3A1",
-      "warning": "#F9E2AF",
-      "error": "#C97B7B",
-
-      "weatherBg": "#0B1B26",
-      "weatherFg": "#F2E8D5",
-      "weatherMuted": "#7F9AAE"
+  "schemaVersion": 2,
+  "activeTheme": "accretion",
+  "themes": {
+    "accretion": {
+      "name": "Accretion",
+      "colors": {
+        "bg": "#0B1B26",
+        "bgSecondary": "#151820",
+        "bgElevated": "#252B38",
+        "fg": "#F2E8D5",
+        "fgMuted": "#7F9AAE",
+        "accent": "#89B4FA",
+        "accentHover": "#A6C8FF",
+        "border": "#343C4D",
+        "success": "#A6E3A1",
+        "warning": "#F9E2AF",
+        "error": "#C97B7B",
+        "weatherBg": "#0B1B26",
+        "weatherFg": "#F2E8D5",
+        "weatherMuted": "#7F9AAE"
+      },
+      "images": {
+        "wallpaper": "~/.config/hypr/img/bg.png",
+        "lockscreen": "~/.config/hypr/img/bg.png"
+      }
+    },
+    "limbo": {
+      "name": "limbo",
+      "colors": {
+        "bg": "#784041",
+        "bgSecondary": "#362122",
+        "bgElevated": "#211C1C",
+        "fg": "#F2E8D5",
+        "fgMuted": "#EB9495",
+        "accent": "#DB5F61",
+        "accentHover": "#AF3B3D",
+        "border": "#343C4D",
+        "success": "#A6E3A1",
+        "warning": "#F9E2AF",
+        "error": "#C97B7B",
+        "weatherBg": "#784041",
+        "weatherFg": "#F2E8D5",
+        "weatherMuted": "#AE7F7F"
+      },
+      "images": {
+        "wallpaper": "~/.config/hypr/img/limbo.png",
+        "lockscreen": "~/.config/hypr/img/limbo.png"
+      }
     }
   }
 }

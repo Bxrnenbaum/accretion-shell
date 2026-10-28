@@ -3,3 +3,4 @@ hyprlock
 hypridle
 quickshell
 rofi
+fontconfig
