@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "activeTheme": "accretion",
+  "activeTheme": "limbo_night",
   "themes": {
     "accretion": {
       "name": "Accretion",
@@ -46,6 +46,29 @@
       "images": {
         "wallpaper": "~/.config/hypr/img/limbo.png",
         "lockscreen": "~/.config/hypr/img/limbo.png"
+      }
+    },
+    "limbo_night": {
+      "name": "limbo_night",
+      "colors": {
+        "bg": "#100D18",
+        "bgSecondary": "#1B1626",
+        "bgElevated": "#282133",
+        "fg": "#E9E2F0",
+        "fgMuted": "#A49AAF",
+        "accent": "#A99ACB",
+        "accentHover": "#C0B3DF",
+        "border": "#383044",
+        "success": "#9BAE9A",
+        "warning": "#D6BE91",
+        "error": "#C18491",
+        "weatherBg": "#100D18",
+        "weatherFg": "#E9E2F0",
+        "weatherMuted": "#A49AAF"
+      },
+      "images": {
+        "wallpaper": "~/.config/hypr/img/limbo_night.png",
+        "lockscreen": "~/.config/hypr/img/limbo_night.png"
       }
     }
   }
