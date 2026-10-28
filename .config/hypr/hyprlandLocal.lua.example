@@ -33,8 +33,7 @@ return {
 
 	config = {
 		input = {
-			kb_layout = "at",
-			kb_variant = "nodeadkeys",
+			kb_layout = "us",
 			follow_mouse = 1,
 			sensitivity = -0.35,
 			force_no_accel = true,
