@@ -212,7 +212,6 @@ hl.bind(mainMod .. " + F", hl.dsp.window.fullscreen({ action = "toggle" }))
 
 -- Screenshots
 hl.bind(mainMod .. " + SHIFT + S", hl.dsp.exec_cmd("hyprshot -m region"))
-hl.bind(mainMod .. " + Print", hl.dsp.exec_cmd("hyprshot -m output -m " .. L.screenshotOutput))
 
 -- Focus
 hl.bind(mainMod .. " + left", hl.dsp.focus({ direction = "l" }))
