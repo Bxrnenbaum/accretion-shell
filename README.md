@@ -4,7 +4,7 @@
 
 ## Screenshots
 <img width="1920" height="1080" alt="accretion desktop" src="https://github.com/user-attachments/assets/f4ab3cc9-e431-4df3-8a4d-9439e0bc7797" />
-<img width="1920" height="1080" alt="accretion lockscreen" src="https://github.com/user-attachments/assets/6646e3dd-c727-40c8-8b4c-4fcbf9244f3a" />
+<img width="1920" height="1080" alt="accretion lockscreen" src="https://github.com/user-attachments/assets/c91e8430-72ca-42bf-87d4-62e9ed8562a0" />
 
 >accretion theme
 
