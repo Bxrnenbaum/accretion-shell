@@ -16,6 +16,8 @@
 >limbo theme
 
 ## Installation
+in theory this project should be compatible with Arch, Fedora, NixOS and Opensuse.It is currently only tested on Arch/EndeavourOS.
+
 - run `curl -fsSL https://raw.githubusercontent.com/Bxrnenbaum/accretion-shell/main/scripts/bootstrap.sh | bash`
 - add the accretion c# utility to path using `echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc && source ~/.bashrc` (bash only, for zsh for example replace `.bashrc` with `.zshrc`)
 - run `accretion install` to install dependencies etc.
