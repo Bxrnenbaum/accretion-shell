@@ -281,38 +281,3 @@ hl.bind("XF86AudioNext", hl.dsp.exec_cmd("playerctl next"), { locked = true })
 hl.bind("XF86AudioPause", hl.dsp.exec_cmd("playerctl play-pause"), { locked = true })
 hl.bind("XF86AudioPlay", hl.dsp.exec_cmd("playerctl play-pause"), { locked = true })
 hl.bind("XF86AudioPrev", hl.dsp.exec_cmd("playerctl previous"), { locked = true })
-
---------------------
---- HYPREXPO
---------------------
-
-hl.bind(mainMod .. " + Tab", function()
-	if hl.plugin.hyprexpo ~= nil then
-		hl.plugin.hyprexpo.expo("toggle")
-		hl.dispatch(hl.dsp.submap("hyprexpo"))
-	end
-end)
-
-hl.define_submap("hyprexpo", function()
-	for _, dir in ipairs({ "left", "right", "up", "down" }) do
-		hl.bind(dir, function()
-			hl.plugin.hyprexpo.kb_focus(dir)
-		end)
-	end
-
-	hl.bind("return", function()
-		hl.plugin.hyprexpo.kb_confirm()
-		hl.dispatch(hl.dsp.submap("reset"))
-	end)
-	hl.bind("escape", function()
-		hl.plugin.hyprexpo.expo("cancel")
-		hl.dispatch(hl.dsp.submap("reset"))
-	end)
-
-	for i = 1, 10 do
-		hl.bind(tostring(i % 10), function()
-			hl.plugin.hyprexpo.kb_selecti(i)
-			hl.dispatch(hl.dsp.submap("reset"))
-		end)
-	end
-end)

@@ -4,7 +4,7 @@ return {
 		fileManager = "nautilus",
 		menu = "rofi -show drun",
 		menuRun = "rofi -show run",
-		menuMode = "rofi -show combi -combi-modes 'drun,script:~/.config/hypr/app-groups.sh' -modes 'combi' -combi-hide-mode-prefix",
+		menuMode = "rofi -show combi -combi-modes 'drun,run' -modes 'combi' -combi-hide-mode-prefix",
 	},
 
 	monitors = {
@@ -12,7 +12,6 @@ return {
 	},
 
 	workspaceMonitor = nil,
-	screenshotOutput = nil,
 
 	autostart = {
 		"qs --path /mnt/Data/github/accretion-shell/.config/qs/",
