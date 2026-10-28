@@ -23,16 +23,62 @@ public static class Install
     ];
 
     private static readonly string[] LocalFiles =
-[
-    ".config/hypr/hyprlandLocal.lua"
-];
+    [
+        ".config/hypr/hyprlandLocal.lua"
+    ];
 
-    public static void Run()
+
+
+    /// <summary>
+    /// Describes how to install packages with one package manager.
+    /// Package lists live in packages/&lt;Id&gt;.txt in the repository.
+    /// </summary>
+    private sealed record PackageManager(
+        string Id,                      // also the package list name: packages/<Id>.txt
+        string Binary,                  // executable used for detection
+        string[] Command,               // command + fixed arguments
+        bool NeedsRoot,
+        string PackagePrefix = "");     // prepended to every package name (nix)
+
+    private static readonly PackageManager[] PackageManagers =
+    [
+        new("pacman", "pacman",       ["pacman", "-S", "--needed"],                 NeedsRoot: true),
+        new("dnf",    "dnf",          ["dnf", "install"],                           NeedsRoot: true),
+        new("zypper", "zypper",       ["zypper", "install"],                        NeedsRoot: true),
+        new("nix",    "nix",
+            ["nix", "--extra-experimental-features", "nix-command flakes",
+             "profile", "install"],
+            NeedsRoot: false, PackagePrefix: "nixpkgs#"),
+    ];
+
+    // /etc/os-release ID / ID_LIKE -> package manager id
+    private static readonly Dictionary<string, string> DistroToManager =
+        new(StringComparer.OrdinalIgnoreCase)
+        {
+            ["arch"] = "pacman",
+            ["manjaro"] = "pacman",
+            ["endeavouros"] = "pacman",
+            ["cachyos"] = "pacman",
+            ["garuda"] = "pacman",
+
+            ["fedora"] = "dnf",
+            ["nobara"] = "dnf",
+            ["rhel"] = "dnf",
+
+            ["opensuse"] = "zypper",
+            ["opensuse-tumbleweed"] = "zypper",
+            ["opensuse-leap"] = "zypper",
+            ["suse"] = "zypper",
+
+            ["nixos"] = "nix",
+        };
+
+    public static void Run(string? packageManagerOverride = null)
     {
         string repoRoot = FindRepoRoot();
         string sourceConfig = Path.Combine(repoRoot, ".config");
 
-        InstallDependencies(repoRoot);
+        InstallDependencies(repoRoot, packageManagerOverride);
 
         if (!Directory.Exists(sourceConfig))
             throw new DirectoryNotFoundException(
@@ -104,7 +150,7 @@ public static class Install
     }
 
     private static void LinkWithBackup(
-    InstallState state, string source, string destination, string backupRoot)
+        InstallState state, string source, string destination, string backupRoot)
     {
         if (IsCorrectLink(destination, source))
         {
@@ -310,13 +356,22 @@ public static class Install
             "Clone it to ~/.local/share/accretion-shell first.");
     }
 
-    private static void InstallDependencies(string repoRoot)
-    {
-        string packageFile = Path.Combine(repoRoot, "packages.txt");
 
-        if (!File.Exists(packageFile))
-            throw new FileNotFoundException(
-                "Could not find packages.txt.", packageFile);
+
+    private static void InstallDependencies(string repoRoot, string? overrideId)
+    {
+        PackageManager manager = DetectPackageManager(overrideId);
+        Console.WriteLine($"Using package manager: {manager.Id}");
+
+        if (manager.Id == "nix" && ReadOsRelease().GetValueOrDefault("ID") == "nixos")
+        {
+            Console.WriteLine(
+                "Note: on NixOS, imperative installs go into your user profile, but " +
+                "Hyprland itself (session, portals, graphics) should be enabled in your " +
+                "system configuration with programs.hyprland.enable = true;");
+        }
+
+        string packageFile = ResolvePackageFile(repoRoot, manager);
 
         string[] packages = File.ReadAllLines(packageFile)
             .Select(line => line.Split('#')[0].Trim())
@@ -330,24 +385,30 @@ public static class Install
             return;
         }
 
-        if (!File.Exists("/usr/bin/pacman"))
+        if (FindOnPath(manager.Binary) is null)
             throw new PlatformNotSupportedException(
-                "Automatic dependency installation currently supports Arch Linux.");
+                $"'{manager.Binary}' was not found on PATH.");
 
         Console.WriteLine("Installing Accretion Shell dependencies...");
 
-        var startInfo = new ProcessStartInfo
-        {
-            FileName = "sudo",
-            UseShellExecute = false
-        };
+        var startInfo = new ProcessStartInfo { UseShellExecute = false };
 
-        startInfo.ArgumentList.Add("pacman");
-        startInfo.ArgumentList.Add("-S");
-        startInfo.ArgumentList.Add("--needed");
+
+        if (manager.NeedsRoot && !Environment.IsPrivilegedProcess)
+        {
+            startInfo.FileName = "sudo";
+            foreach (string part in manager.Command)
+                startInfo.ArgumentList.Add(part);
+        }
+        else
+        {
+            startInfo.FileName = manager.Command[0];
+            foreach (string part in manager.Command.Skip(1))
+                startInfo.ArgumentList.Add(part);
+        }
 
         foreach (string package in packages)
-            startInfo.ArgumentList.Add(package);
+            startInfo.ArgumentList.Add(manager.PackagePrefix + package);
 
         using Process process = Process.Start(startInfo)
             ?? throw new InvalidOperationException(
@@ -358,6 +419,108 @@ public static class Install
         if (process.ExitCode != 0)
             throw new InvalidOperationException(
                 "Dependency installation failed. Accretion was not installed.");
+    }
+
+    private static string ResolvePackageFile(string repoRoot, PackageManager manager)
+    {
+        string packageFile = Path.Combine(repoRoot, "packages", $"{manager.Id}.txt");
+
+        if (File.Exists(packageFile))
+            return packageFile;
+
+        // Backwards compatibility: the old single packages.txt was pacman-only.
+        string legacy = Path.Combine(repoRoot, "packages.txt");
+        if (manager.Id == "pacman" && File.Exists(legacy))
+            return legacy;
+
+        string available = Directory.Exists(Path.Combine(repoRoot, "packages"))
+            ? string.Join(", ", Directory
+                .GetFiles(Path.Combine(repoRoot, "packages"), "*.txt")
+                .Select(Path.GetFileNameWithoutExtension))
+            : "none";
+
+        throw new FileNotFoundException(
+            $"No package list for '{manager.Id}'. Expected packages/{manager.Id}.txt " +
+            $"(available: {available}). Add one, or install the dependencies manually.",
+            packageFile);
+    }
+
+
+    private static PackageManager DetectPackageManager(string? overrideId)
+    {
+        overrideId ??= Environment.GetEnvironmentVariable("ACCRETION_PACKAGE_MANAGER");
+
+        if (!string.IsNullOrWhiteSpace(overrideId))
+        {
+            return PackageManagers.FirstOrDefault(m =>
+                       string.Equals(m.Id, overrideId.Trim(), StringComparison.OrdinalIgnoreCase))
+                   ?? throw new ArgumentException(
+                       $"Unknown package manager '{overrideId}'. Supported: " +
+                       string.Join(", ", PackageManagers.Select(m => m.Id)));
+        }
+
+        Dictionary<string, string> osRelease = ReadOsRelease();
+
+        IEnumerable<string> distroIds =
+            new[] { osRelease.GetValueOrDefault("ID") }
+                .Concat((osRelease.GetValueOrDefault("ID_LIKE") ?? "")
+                    .Split(' ', StringSplitOptions.RemoveEmptyEntries))
+                .Where(id => !string.IsNullOrWhiteSpace(id))!;
+
+        foreach (string id in distroIds)
+        {
+            if (DistroToManager.TryGetValue(id, out string? managerId))
+                return PackageManagers.First(m => m.Id == managerId);
+        }
+
+
+        PackageManager? found = PackageManagers.FirstOrDefault(
+            m => FindOnPath(m.Binary) is not null);
+
+        return found ?? throw new PlatformNotSupportedException(
+            "Could not detect a supported package manager. Supported: " +
+            string.Join(", ", PackageManagers.Select(m => m.Id)) +
+            ". Set ACCRETION_PACKAGE_MANAGER to force one.");
+    }
+
+    private static Dictionary<string, string> ReadOsRelease()
+    {
+        var values = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+
+        foreach (string path in new[] { "/etc/os-release", "/usr/lib/os-release" })
+        {
+            if (!File.Exists(path))
+                continue;
+
+            foreach (string line in File.ReadAllLines(path))
+            {
+                int eq = line.IndexOf('=');
+                if (eq <= 0 || line.TrimStart().StartsWith('#'))
+                    continue;
+
+                values[line[..eq].Trim()] = line[(eq + 1)..].Trim().Trim('"', '\'');
+            }
+
+            break;
+        }
+
+        return values;
+    }
+
+    private static string? FindOnPath(string executable)
+    {
+        string? path = Environment.GetEnvironmentVariable("PATH");
+        if (path is null)
+            return null;
+
+        foreach (string dir in path.Split(':', StringSplitOptions.RemoveEmptyEntries))
+        {
+            string candidate = Path.Combine(dir, executable);
+            if (File.Exists(candidate))
+                return candidate;
+        }
+
+        return null;
     }
 }
 

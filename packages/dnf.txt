@@ -1,0 +1,14 @@
+# Fedora: Hyprland is NOT in the official repos (orphaned), enable a COPR first:
+#   sudo dnf copr enable solopasha/hyprland     (hyprland, hyprlock, hypridle, hyprpaper, hyprshot)
+#   sudo dnf copr enable errornointernet/quickshell   (only if quickshell isn't in your Fedora release)
+# If a COPR for your release is missing, nett00n/hyprland covers F43/F44/rawhide.
+hyprland
+hyprlock
+hypridle
+quickshell
+rofi          # if `dnf info rofi` shows < 2.0, use rofi-wayland instead
+fontconfig
+hyprpaper
+hyprshot
+kitty
+nautilus

@@ -6,3 +6,4 @@ rofi
 fontconfig
 hyprpaper
 hyprshot
+kitty

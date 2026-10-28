@@ -1,0 +1,12 @@
+# nixpkgs attribute names (the installer prepends "nixpkgs#").
+# On NixOS also set programs.hyprland.enable = true; in your system config.
+hyprland
+hyprlock
+hypridle
+quickshell
+rofi
+fontconfig
+hyprpaper
+hyprshot
+kitty
+nautilus

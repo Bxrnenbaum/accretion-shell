@@ -1,0 +1,11 @@
+# opensuse tumbleweed / slowroll only. hyprland is not available on Leap
+hyprland
+hyprlock
+hypridle
+quickshell
+rofi
+fontconfig
+hyprpaper
+hyprshot
+kitty
+nautilus
