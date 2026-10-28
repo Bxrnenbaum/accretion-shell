@@ -11,7 +11,7 @@ return {
 		{ output = "", mode = "preferred", position = "auto", scale = "auto" },
 	},
 
-	workspaceMonitor = nil,
+	workspaceRanges = {},
 
 	autostart = {
 		"qs --path .config/qs/",

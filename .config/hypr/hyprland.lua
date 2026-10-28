@@ -83,8 +83,10 @@ for _, monitor in ipairs(L.monitors) do
 	hl.monitor(monitor)
 end
 
-for i = 1, 10 do
-	hl.workspace_rule({ workspace = tostring(i), monitor = L.workspaceMonitor })
+for _, r in ipairs(L.workspaceRanges or {}) do
+	for i = r.first, r.last do
+		hl.workspace_rule({ workspace = tostring(i), monitor = r.monitor })
+	end
 end
 
 for name, value in pairs(L.env) do
@@ -253,7 +255,6 @@ for i, key in ipairs(numpadKeys) do
 	hl.bind(mainMod .. " + " .. key, hl.dsp.focus({ workspace = workspace }))
 	hl.bind(mainMod .. " + SHIFT + " .. key, hl.dsp.window.move({ workspace = workspace }))
 end
-
 
 hl.bind(mainMod .. " + S", hl.dsp.workspace.toggle_special("magic"))
 
