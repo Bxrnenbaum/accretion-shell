@@ -1,5 +1,5 @@
 # Accretion-shell
-> A shell containing a [Quickshell](https://quickshell.outfoxxed.me/) config replacing [Malachite-Quickshell](https://github.com/Bxrnenbaum/Malachite-Quickshell/), a config for rofi, hyprland, hypridle, hyprlock and hyprpaper.
+> A shell containing a [Quickshell](https://quickshell.outfoxxed.me/) config replacing [Malachite-Quickshell](https://github.com/Bxrnenbaum/Malachite-Quickshell/), a config for rofi, kitty, hyprland, hypridle, hyprlock and hyprpaper aswell as a c# tool for managing themes, dependencies etc.
 ---
 
 ## Screenshots
@@ -35,7 +35,8 @@ in theory this project should be compatible with Arch, Fedora, NixOS and Opensus
 > if wallr is installed, it will be automatically used, as it provides instant reloading and fading animations, which makes it the preferred alternative to hyprpaper. sadly it isnt available on every distro. replacing hyprpaper with wallr in hyprlandLocal.lua is recommended.
 
 
-**disclaimer:** accretion-cli does not know your monitor layout our your preference, so it creates a generic hyprlandLocal.lua file. it is strongly recommended to check it and atleast modify the monitor configuration to your liking. this file is persistent after updateing using `accretion update` and while not be overwritten once created.
+**disclaimer:** accretion-cli does not know your monitor layout our your preference, so it creates a generic hyprlandLocal.lua file. it is strongly recommended to check it and atleast modify the monitor configuration and kb layout to your liking. this file is persistent after updateing using `accretion update` and while not be overwritten once created.
+The weather currently defaults to Vienna, modify latitude and longitude in `.config/qs/widgets/WeatherWidget.qml` 
 
 ## Usage
 
