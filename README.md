@@ -25,6 +25,7 @@ https://github.com/user-attachments/assets/27adc953-6414-42ef-982a-9cf5c1d9cf48
 
 ## Installation
 in theory this project should be compatible with Arch, Fedora, NixOS and Opensuse. It is currently only tested on Arch/EndeavourOS (x64).
+.NET10.0 is required at the moment to build the project. binaries may come at a later point in time
 
 - run `curl -fsSL https://raw.githubusercontent.com/Bxrnenbaum/accretion-shell/main/scripts/bootstrap.sh | bash`
 - add the accretion c# utility to path using `echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc && source ~/.bashrc` (bash only, for zsh for example replace `.bashrc` with `.zshrc`)
