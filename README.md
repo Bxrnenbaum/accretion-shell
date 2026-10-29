@@ -1,5 +1,5 @@
 # Accretion-shell
-> A shell containing a [Quickshell](https://quickshell.outfoxxed.me/) config replacing [Malachite-Quickshell](https://github.com/Bxrnenbaum/Malachite-Quickshell/), a config for rofi, hyprland, hypridle, hyprlock and hyprpaper.
+> A shell containing a [Quickshell](https://quickshell.outfoxxed.me/) config replacing [Malachite-Quickshell](https://github.com/Bxrnenbaum/Malachite-Quickshell/), a config for rofi, kitty, hyprland, hypridle, hyprlock and hyprpaper aswell as a c# tool for managing themes, dependencies etc.
 ---
 
 ## Screenshots
@@ -15,8 +15,17 @@
 
 >limbo theme
 
+---
+
+https://github.com/user-attachments/assets/27adc953-6414-42ef-982a-9cf5c1d9cf48
+>theme switching in action. wallr is used in this case, so wallpaper relading is smooth and instant
+
+*All wallpapers have been made using blender*
+
+
 ## Installation
-in theory this project should be compatible with Arch, Fedora, NixOS and Opensuse.It is currently only tested on Arch/EndeavourOS.
+in theory this project should be compatible with Arch, Fedora, NixOS and Opensuse. It is currently only tested on Arch/EndeavourOS (x64).
+.NET10.0 is required at the moment to build the project. binaries may come at a later point in time
 
 - run `curl -fsSL https://raw.githubusercontent.com/Bxrnenbaum/accretion-shell/main/scripts/bootstrap.sh | bash`
 - add the accretion c# utility to path using `echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc && source ~/.bashrc` (bash only, for zsh for example replace `.bashrc` with `.zshrc`)
@@ -26,7 +35,8 @@ in theory this project should be compatible with Arch, Fedora, NixOS and Opensus
 > if wallr is installed, it will be automatically used, as it provides instant reloading and fading animations, which makes it the preferred alternative to hyprpaper. sadly it isnt available on every distro. replacing hyprpaper with wallr in hyprlandLocal.lua is recommended.
 
 
-**disclaimer:** accretion-cli does not know your monitor layout our your preference, so it creates a generic hyprlandLocal.lua file. it is strongly recommended to check it and atleast modify the monitor configuration to your liking. this file is persistent after updateing using `accretion update` and while not be overwritten once created.
+**disclaimer:** accretion-cli does not know your monitor layout our your preference, so it creates a generic hyprlandLocal.lua file. it is strongly recommended to check it and atleast modify the monitor configuration and kb layout to your liking. this file is persistent after updateing using `accretion update` and while not be overwritten once created.
+The weather currently defaults to Vienna, modify latitude and longitude in `.config/qs/widgets/WeatherWidget.qml` 
 
 ## Usage
 
