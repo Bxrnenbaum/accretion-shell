@@ -6,6 +6,7 @@
     font: @font;
     background-color: transparent;
     text-color: @fg;
+    separatorcolor: transparent;
 }
 
 window {
@@ -75,11 +76,28 @@ element {
     children: [ element-icon, element-text ];
 }
 
+/* Default rows */
 element normal.normal {
     background-color: transparent;
     text-color: @muted;
 }
 
+/* Alternating rows */
+element alternate.normal {
+    background-color: @surface;
+    text-color: @accent;
+}
+
+element selected.normal,
+element selected.alternate,
+element selected.active,
+element selected.urgent {
+    background-color: @cream;
+    border-color: @border;
+    text-color: @selected;
+}
+
+/* Other active/urgent entries */
 element normal.active {
     background-color: transparent;
     text-color: @accent;
@@ -88,22 +106,6 @@ element normal.active {
 element normal.urgent {
     background-color: transparent;
     text-color: @fg;
-}
-
-element selected.normal {
-    background-color: @selected;
-    border-color: @border;
-    text-color: @cream;
-}
-
-element selected.active {
-    background-color: @active-selected;
-    text-color: @cream;
-}
-
-element selected.urgent {
-    background-color: @urgent-selected;
-    text-color: @cream;
 }
 
 element-icon {
@@ -127,3 +129,5 @@ message {
 textbox {
     text-color: @fg;
 }
+
+

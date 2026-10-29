@@ -19,7 +19,8 @@ public static class Install
     [
         "hypr",
         "qs",
-        "rofi"
+        "rofi",
+        "kitty"
     ];
 
     private static readonly string[] LocalFiles =
