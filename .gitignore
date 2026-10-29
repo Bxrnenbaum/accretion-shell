@@ -3,7 +3,7 @@
 /.config/hypr/hyprlandTheme.lua
 /.config/hypr/hyprpaper.conf
 /.config/hypr/hyprlockTheme.conf
-
+/.config/kitty/kitty.conf
 /.config/hypr/hyprlandLocal.lua
 
 bin/
