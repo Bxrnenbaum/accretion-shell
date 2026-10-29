@@ -20,4 +20,5 @@ return {
 	rounding = 12,
 	roundingPower = 2,
 	shadowColor = "rgba(00000066)",
+	wallpaper = "{{image.wallpaper}}"
 }

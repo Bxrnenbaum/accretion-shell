@@ -1,3 +1,5 @@
+local T = require("hyprlandTheme")
+
 return {
 	apps = {
 		terminal = "kitty",
@@ -21,7 +23,9 @@ return {
 		"wl-paste --type text --watch cliphist store",
 		"wl-paste --image --watch cliphist store",
 		"hyprpm reload -n",
-		"hyprpaper", -- replace with wallr if available
+		"hyprpaper",
+		-- "sleep 2 && wallr set '" .. T.wallpaper .. "'"
+		-- uncomment the line above and remove "hyprpaper" to use wallr instead
 	},
 
 	env = {

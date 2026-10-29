@@ -8,6 +8,8 @@
 
 bin/
 obj/
+dist/
+
 
 .env
 .env.*

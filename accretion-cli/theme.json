@@ -21,8 +21,8 @@
         "weatherMuted": "#7F9AAE"
       },
       "images": {
-        "wallpaper": "~/.config/hypr/img/bg.png",
-        "lockscreen": "~/.config/hypr/img/bg.png"
+        "wallpaper": "~/.config/hypr/img/accretion.png",
+        "lockscreen": "~/.config/hypr/img/accretion.png"
       }
     },
     "limbo": {

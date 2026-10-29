@@ -13,8 +13,7 @@ public static class Config
         (".config/rofi/colors.rasi", "templates/colors.rasi.tpl"),
         (".config/hypr/hyprlandTheme.lua", "templates/hyprlandTheme.lua.tpl"),
         (".config/hypr/hyprpaper.conf", "templates/hyprpaper.conf.tpl"),
-        (".config/hypr/hyprlockTheme.conf", "templates/hyprlockTheme.conf.tpl"),
-        (".config/kitty/kitty.conf", "templates/kitty.conf.tpl")
+        (".config/hypr/hyprlockTheme.conf", "templates/hyprlockTheme.conf.tpl")
     ];
 
     private static readonly Regex PlaceholderRegex =
