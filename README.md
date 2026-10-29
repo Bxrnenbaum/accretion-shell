@@ -15,6 +15,14 @@
 
 >limbo theme
 
+---
+
+https://github.com/user-attachments/assets/27adc953-6414-42ef-982a-9cf5c1d9cf48
+>theme switching in action. wallr is used in this case, so wallpaper relading is smooth and instant
+
+*All wallpapers have been made using blender*
+
+
 ## Installation
 in theory this project should be compatible with Arch, Fedora, NixOS and Opensuse.It is currently only tested on Arch/EndeavourOS.
 
