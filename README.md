@@ -3,17 +3,24 @@
 ---
 
 ## Screenshots
-<img width="1920" height="1080" alt="accretion desktop" src="https://github.com/user-attachments/assets/f4ab3cc9-e431-4df3-8a4d-9439e0bc7797" />
-<img width="1920" height="1080" alt="accretion lockscreen" src="https://github.com/user-attachments/assets/c91e8430-72ca-42bf-87d4-62e9ed8562a0" />
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/0313f505-06bb-48a9-866f-a750ed56ff3b" />
+<img width="1920" height="1080" alt="20261030_14h12m17s_grim" src="https://github.com/user-attachments/assets/043dd4b6-d05b-4921-9bdf-70522cdf0cfc" />
 
 >accretion theme
 
 ---
 
-<img width="1920" height="1080" alt="limbo desktop" src="https://github.com/user-attachments/assets/6808a03d-1f68-4f9c-a0f6-9019d0f646ad" />
-<img width="1920" height="1080" alt="limbo lockscreen" src="https://github.com/user-attachments/assets/b63599b0-fef2-465e-9d27-f7e9b3190756" />
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/fcd64f46-d3ac-44f7-b062-ff0dc66812e1" />
+<img width="1920" height="1080" alt="20261030_14h14m38s_grim" src="https://github.com/user-attachments/assets/8c3ccc2d-8fe2-443a-a7bf-ed3695a1e980" />
 
 >limbo theme
+
+---
+
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/d46a17ee-a23c-415a-a3d0-bdc30f11f2fc" />
+<img width="1920" height="1080" alt="20261030_14h17m43s_grim" src="https://github.com/user-attachments/assets/42eddfc1-7a18-42fd-a856-307890b921c1" />
+
+>limbo_night theme
 
 ---
 
