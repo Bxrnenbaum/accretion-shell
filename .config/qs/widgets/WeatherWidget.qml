@@ -35,20 +35,27 @@ Item {
   property bool showRange: false
 
   function loadLocationFile() {
-    const file = new QmlFile(weatherWidget.locationFile);
-    if (!file.exists) {
-      weatherWidget.refresh();
-      return;
-    }
+    locationReader.running = true;
+  }
 
-    try {
-      const data = JSON.parse(file.read());
-      if (typeof data.latitude === "number") weatherWidget.latitude = data.latitude;
-      if (typeof data.longitude === "number") weatherWidget.longitude = data.longitude;
-      weatherWidget.refresh();
-    } catch (error) {
-      // keep fallback coordinates
-      weatherWidget.refresh();
+  Process {
+    id: locationReader
+    running: false
+    command: ["sh", "-c", "cat " + JSON.stringify(weatherWidget.locationFile) + " 2>/dev/null || true"]
+    stdout: StdioCollector {
+      onStreamFinished: {
+        if (text && text.trim().length > 0) {
+          try {
+            const data = JSON.parse(text.trim());
+            if (typeof data.latitude === "number" && Number.isFinite(data.latitude)) weatherWidget.latitude = data.latitude;
+            if (typeof data.longitude === "number" && Number.isFinite(data.longitude)) weatherWidget.longitude = data.longitude;
+          } catch (err) {
+            // keep fallback coordinates
+          }
+        }
+
+        weatherWidget.refresh();
+      }
     }
   }
 
@@ -107,6 +114,8 @@ Item {
     try {
       const d = JSON.parse(text);
       const c = d.current;
+      if (!c || !d.daily) throw new Error("invalid payload");
+
       temperature = c.temperature_2m;
       feelsLike = c.apparent_temperature;
       humidity = c.relative_humidity_2m;
@@ -118,25 +127,39 @@ Item {
       updatedAt = Qt.formatTime(new Date(), "hh:mm");
       loaded = true;
       failed = false;
-    } catch (e) {
+    } catch (error) {
+      loaded = false;
       failed = true;
     }
   }
 
   Process {
     id: fetcher
+    running: false
     command: ["curl", "-sf", "--max-time", "10", weatherWidget.url]
     stdout: StdioCollector {
       onStreamFinished: {
-        if (text.length > 0) weatherWidget.applyData(text);
-        else weatherWidget.failed = true;
+        if (!text || text.trim().length === 0) {
+          weatherWidget.loaded = false;
+          weatherWidget.failed = true;
+          return;
+        }
+
+        weatherWidget.applyData(text);
       }
     }
-    onExited: (code) => { if (code !== 0) weatherWidget.failed = true; }
+    onExited: (code) => {
+      if (code !== 0) {
+        weatherWidget.loaded = false;
+        weatherWidget.failed = true;
+      }
+    }
   }
 
   function refresh() {
-    if (!fetcher.running) fetcher.running = true;
+    loaded = false;
+    failed = false;
+    fetcher.running = true;
   }
 
   Timer {
