@@ -9,6 +9,7 @@ Item {
 
   property real bodyWidth: 340
   readonly property real cornerRadius: height / 2
+  property string locationFile: Quickshell.configDir + "/qs/weather-location.json"
 
   implicitHeight: 32
   implicitWidth: bodyWidth + cornerRadius * 2
@@ -248,5 +249,19 @@ Item {
     color: bg.color
     x: weatherWidget.width - weatherWidget.cornerRadius
     y: 0
+  }
+
+  Component.onCompleted: {
+    const locationPath = Quickshell.configDir + "/qs/weather-location.json";
+    const file = new QmlFile(locationPath);
+    if (file.exists) {
+      try {
+        const data = JSON.parse(file.read());
+        if (typeof data.latitude === "number") weatherWidget.latitude = data.latitude;
+        if (typeof data.longitude === "number") weatherWidget.longitude = data.longitude;
+      } catch (error) {
+        // keep fallback coordinates
+      }
+    }
   }
 }

@@ -160,33 +160,30 @@ public static class Config
         Console.WriteLine("Theme applied successfully.");
     }
 
-
     private static void ApplyWallpaper(string wallpaperPath)
     {
-        // Wallr is preferred because it supports animated transitions.
         if (FindExecutable("wallr") is not null)
         {
             Console.WriteLine("Using Wallr for wallpaper transitions.");
 
             RunCommand("wallr", [
                 "set",
-            wallpaperPath,
-            "-e", "fade",
-            "-d", "1200ms"
+                wallpaperPath,
+                "-e", "fade",
+                "-d", "1200ms"
             ]);
 
             return;
         }
 
-        // Fallback: Hyprpaper is installed through the normal dependencies.
         if (FindExecutable("hyprctl") is not null)
         {
             Console.WriteLine("Wallr not found; using Hyprpaper.");
 
             RunCommand("hyprctl", [
                 "hyprpaper",
-            "reload",
-            "," + wallpaperPath
+                "reload",
+                "," + wallpaperPath
             ]);
 
             return;
@@ -288,8 +285,6 @@ public static class Config
         return path;
     }
 
-
-
     private static string GetThemeJsonPath(string root) =>
         Path.Combine(root, "accretion-cli", ThemePath);
 
@@ -302,8 +297,7 @@ public static class Config
             ?? throw new InvalidOperationException("theme.json has no 'themes' object.");
 
 
-
-    private static string FindRepoRoot()
+    public static string FindRepoRoot()
     {
         string home = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
 

@@ -64,7 +64,31 @@ public static class Update
             Console.WriteLine("Note: packages.txt changed. Run 'accretion install' to install new dependencies.");
 
         if (changed.Any(f => f.StartsWith("accretion-cli/") && f.EndsWith(".cs")))
-            Console.WriteLine("Note: the CLI source changed. Rebuild it to use the new version.");
+        {
+            Console.Write("Rebuild the CLI binary now? [Y/n] ");
+            string? answer = Console.ReadLine();
+
+            if (string.IsNullOrWhiteSpace(answer) || answer.Equals("y", StringComparison.OrdinalIgnoreCase) || answer.Equals("yes", StringComparison.OrdinalIgnoreCase))
+            {
+                string projectPath = Path.Combine(repoRoot, "accretion-cli", "accretion-cli.csproj");
+                var build = RunProcess("dotnet", "build", projectPath, "--nologo");
+
+                if (build.Code != 0)
+                {
+                    Console.WriteLine("CLI rebuild failed.");
+                    if (!string.IsNullOrWhiteSpace(build.Err))
+                        Console.WriteLine(build.Err);
+                }
+                else
+                {
+                    Console.WriteLine("CLI rebuilt successfully.");
+                }
+            }
+            else
+            {
+                Console.WriteLine("Skipping CLI rebuild. Run 'dotnet build accretion-cli/accretion-cli.csproj' later to update the binary.");
+            }
+        }
 
         Console.WriteLine("Update complete. Restart Quickshell/Hyprland components to pick up changes.");
     }
@@ -98,6 +122,36 @@ public static class Update
         catch (Win32Exception)
         {
             throw new InvalidOperationException("git is not installed or not in PATH.");
+        }
+    }
+
+    private static (int Code, string Out, string Err) RunProcess(string fileName, params string[] args)
+    {
+        var startInfo = new ProcessStartInfo
+        {
+            FileName = fileName,
+            UseShellExecute = false,
+            RedirectStandardOutput = true,
+            RedirectStandardError = true
+        };
+
+        foreach (string arg in args)
+            startInfo.ArgumentList.Add(arg);
+
+        try
+        {
+            using Process process = Process.Start(startInfo)
+                ?? throw new InvalidOperationException($"Failed to start {fileName}.");
+
+            var errTask = process.StandardError.ReadToEndAsync();
+            string output = process.StandardOutput.ReadToEnd();
+            process.WaitForExit();
+
+            return (process.ExitCode, output.Trim(), errTask.Result.Trim());
+        }
+        catch (Win32Exception)
+        {
+            throw new InvalidOperationException($"{fileName} is not installed or not in PATH.");
         }
     }
 }

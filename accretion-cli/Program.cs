@@ -62,8 +62,13 @@ static void HandleConfig(string[] command)
                 Config.ListThemes();
             break;
 
+        case "location":
+            string[] locationArgs = command.Skip(2).ToArray();
+            Location.Configure(locationArgs);
+            break;
+
         default:
-            Console.WriteLine("Usage: accretion config <apply|theme [name]>");
+            Console.WriteLine("Usage: accretion config <apply|theme [name]|location [lat lon]>");
             break;
     }
 }
@@ -74,12 +79,13 @@ static void PrintHelp()
         Accretion Shell
 
         Usage:
-          accretion config apply          Regenerate theme files
-          accretion config theme          List themes
-          accretion config theme <name>   Switch theme and apply it
-          accretion install               Install shell configuration
-          accretion update                Pull the latest version and regenerate themes
-          accretion uninstall             Uninstall shell configuration
-          accretion help                  Show this help
+          accretion config apply                Generate theme files
+          accretion config theme                List themes
+          accretion config theme <name>        Switch theme and apply it
+          accretion config location <lat> <lon> Set weather location by coordinates
+          accretion install                    Install shell configuration
+          accretion update                     Pull the latest version and regenerate themes
+          accretion uninstall                  Uninstall shell configuration
+          accretion help                       Show this help
         """);
 }
