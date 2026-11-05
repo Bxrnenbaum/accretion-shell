@@ -81,11 +81,11 @@ static void PrintHelp()
         Usage:
           accretion config apply                Generate theme files
           accretion config theme                List themes
-          accretion config theme <name>        Switch theme and apply it
+          accretion config theme <name>         Switch theme and apply it
           accretion config location <lat> <lon> Set weather location by coordinates
-          accretion install                    Install shell configuration
-          accretion update                     Pull the latest version and regenerate themes
-          accretion uninstall                  Uninstall shell configuration
-          accretion help                       Show this help
+          accretion install                     Install shell configuration
+          accretion update                      Pull the latest version and regenerate themes
+          accretion uninstall                   Uninstall shell configuration
+          accretion help                        Show this help
         """);
 }

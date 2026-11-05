@@ -52,9 +52,6 @@ accretion-cli is a custom c# application used to install dependencies, update wh
 Sometimes hyprland throws errors after updating, `hyprctl reload` should fix them.
 
 
-Theme changes using `accretion config theme <theme_name>` currently dont update instantly, except for programs like quickshell which autoreload. hyprpaper for example has to be restarted manually or by relogging.
-
-
 #### currently the following keybinds are configured:
 - **SUPER + SHIFT + S**: changed to take a region screenshot using hyprshot
 - **SUPER + P**: Cycle between dwindle (default) and scrolling layout
