@@ -34,6 +34,24 @@ Item {
 
   property bool showRange: false
 
+  function loadLocationFile() {
+    const file = new QmlFile(weatherWidget.locationFile);
+    if (!file.exists) {
+      weatherWidget.refresh();
+      return;
+    }
+
+    try {
+      const data = JSON.parse(file.read());
+      if (typeof data.latitude === "number") weatherWidget.latitude = data.latitude;
+      if (typeof data.longitude === "number") weatherWidget.longitude = data.longitude;
+      weatherWidget.refresh();
+    } catch (error) {
+      // keep fallback coordinates
+      weatherWidget.refresh();
+    }
+  }
+
   readonly property string unitSymbol: metric ? "°C" : "°F"
   readonly property string windUnit: metric ? "km/h" : "mph"
 
@@ -125,7 +143,7 @@ Item {
     interval: weatherWidget.refreshMinutes * 60 * 1000
     repeat: true
     running: true
-    triggeredOnStart: true
+    triggeredOnStart: false
     onTriggered: weatherWidget.refresh()
   }
 
@@ -252,16 +270,6 @@ Item {
   }
 
   Component.onCompleted: {
-    const locationPath = Quickshell.configDir + "/qs/weather-location.json";
-    const file = new QmlFile(locationPath);
-    if (file.exists) {
-      try {
-        const data = JSON.parse(file.read());
-        if (typeof data.latitude === "number") weatherWidget.latitude = data.latitude;
-        if (typeof data.longitude === "number") weatherWidget.longitude = data.longitude;
-      } catch (error) {
-        // keep fallback coordinates
-      }
-    }
+    weatherWidget.loadLocationFile();
   }
 }
