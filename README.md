@@ -34,10 +34,29 @@ https://github.com/user-attachments/assets/27adc953-6414-42ef-982a-9cf5c1d9cf48
 in theory this project should be compatible with Arch, Fedora, NixOS and Opensuse. It is currently only tested on Arch/EndeavourOS (x64).
 .NET10.0 is required at the moment to build the project. binaries may come at a later point in time
 
-- run `curl -fsSL https://raw.githubusercontent.com/Bxrnenbaum/accretion-shell/main/scripts/bootstrap.sh | bash`
-- add the accretion c# utility to path using `echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc && source ~/.bashrc` (bash only, for zsh for example replace `.bashrc` with `.zshrc`)
-- run `accretion install` to install dependencies etc.
-- run `accretion config apply` to generate the configs using the colors specified in `~/.local/share/accretion-shell/accretion-cli/theme.json` (you can modify this file to change the colors used in the system)
+1. Run the bootstrap script:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/Bxrnenbaum/accretion-shell/main/scripts/bootstrap.sh | bash
+```
+
+2. Add the accretion c# utility to your path (bash only, for zsh for example replace `.bashrc` with `.zshrc`):
+
+```bash
+echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc && source ~/.bashrc
+```
+
+3. Install dependencies etc.:
+
+```bash
+accretion install
+```
+
+4. Generate the configs using the colors specified in `~/.local/share/accretion-shell/accretion-cli/theme.json` (you can modify this file to change the colors used in the system):
+
+```bash
+accretion config apply
+```
 
 > if wallr is installed, it will be automatically used, as it provides instant reloading and fading animations, which makes it the preferred alternative to hyprpaper. sadly it isnt available on every distro. replacing hyprpaper with wallr in hyprlandLocal.lua is recommended.
 
