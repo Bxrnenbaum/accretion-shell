@@ -1,5 +1,4 @@
 import QtQuick
-import QtQuick.Controls
 import QtQuick.Layouts
 import Quickshell
 import Quickshell.Services.Mpris
@@ -195,13 +194,9 @@ Item {
       y: bg.height - height - 2
       height: 2
       radius: 1
-      width: (bg.width - musicWidget.cornerRadius * 2) * musicWidget.progress
+      width: Math.round((bg.width - musicWidget.cornerRadius * 2) * musicWidget.progress)
       color: RootDir.Theme.fg
       opacity: 0.6
-
-      Behavior on width {
-        NumberAnimation { duration: 1000; easing.type: Easing.Linear }
-      }
     }
   }
 

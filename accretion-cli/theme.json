@@ -70,6 +70,29 @@
         "wallpaper": "~/.config/hypr/img/limbo_night.png",
         "lockscreen": "~/.config/hypr/img/limbo_night.png"
       }
+    },
+    "river": {
+      "name": "river",
+      "colors": {
+        "bg": "#16060A",
+        "bgSecondary": "#220A10",
+        "bgElevated": "#321117",
+        "fg": "#F3E4DC",
+        "fgMuted": "#B58C8C",
+        "accent": "#D9726E",
+        "accentHover": "#EB8F8A",
+        "border": "#4A1E26",
+        "success": "#8FA98A",
+        "warning": "#D9B26F",
+        "error": "#E0556A",
+        "weatherBg": "#16060A",
+        "weatherFg": "#F3E4DC",
+        "weatherMuted": "#B58C8C"
+      },
+      "images": {
+        "wallpaper": "~/.config/hypr/img/river.png",
+        "lockscreen": "~/.config/hypr/img/river.png"
+      }
     }
   }
 }

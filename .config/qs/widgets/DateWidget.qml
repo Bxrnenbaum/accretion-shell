@@ -1,8 +1,5 @@
 import QtQuick
-import QtQuick.Controls
 import Quickshell
-import Quickshell.Io
-import QtQuick.Effects
 
 import "../" as RootDir
 
@@ -14,6 +11,11 @@ Item {
 
   implicitHeight: 32
   implicitWidth: bodyWidth + cornerRadius * 2
+
+  SystemClock {
+    id: clock
+    precision: SystemClock.Minutes
+  }
 
   Rectangle {
     id: bg
@@ -28,36 +30,13 @@ Item {
     bottomLeftRadius: dateWidget.cornerRadius
     bottomRightRadius: dateWidget.cornerRadius
 
-    Behavior on border.color {
-      ColorAnimation { duration: 100 }
-    }
-
-    HoverHandler { id: hoverHandler }
-
     Text {
-      id: clock
       anchors.centerIn: parent
       font.family: RootDir.Fonts.text
       font.pixelSize: 15
       font.bold: true
       color: RootDir.Theme.fg
-
-      Timer {
-        interval: 1000
-        running: true
-        repeat: true
-        triggeredOnStart: true
-        onTriggered: dateProcess.running = true
-      }
-
-      Process {
-        id: dateProcess
-        command: ["date", "+%d %b %H:%M"]
-        running: false
-        stdout: StdioCollector {
-          onStreamFinished: clock.text = this.text.trim()
-        }
-      }
+      text: Qt.formatDateTime(clock.date, "dd MMM HH:mm")
     }
   }
 

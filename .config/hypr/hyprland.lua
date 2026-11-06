@@ -120,20 +120,6 @@ if hl.plugin.hyprexpo ~= nil then
 end
 
 hl.window_rule({
-	name = "move-hyprland-run",
-	match = { class = "hyprland-run" },
-	move = "20 monitor_h-120",
-	float = true,
-})
-
-hl.window_rule({
-	name = "slayThespire",
-	match = { class = "^(Slay the Spire)$" },
-	fullscreen = true,
-	float = true,
-})
-
-hl.window_rule({
 	name = "gnome-calculator-min-size",
 	match = { class = "org.gnome.Calculator" },
 	float = true,
