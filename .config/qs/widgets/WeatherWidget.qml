@@ -49,7 +49,6 @@ Item {
             if (typeof data.latitude === "number" && Number.isFinite(data.latitude)) weatherWidget.latitude = data.latitude;
             if (typeof data.longitude === "number" && Number.isFinite(data.longitude)) weatherWidget.longitude = data.longitude;
           } catch (err) {
-            // keep fallback coordinates
           }
         }
 
