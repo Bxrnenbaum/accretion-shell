@@ -3,6 +3,7 @@ import QtQuick.Layouts
 import Quickshell
 import Quickshell.Services.Mpris
 import Quickshell.Hyprland
+import Quickshell.Io
 import Qt5Compat.GraphicalEffects
 
 import "../" as RootDir
@@ -33,6 +34,12 @@ Item {
   readonly property real progress: (player && player.length > 0)
   ? Math.min(1, player.position / player.length)
   : 0
+  property var cavaLevels: []
+
+  onIsPlayingChanged: {
+    if (!isPlaying)
+    cavaLevels = [];
+  }
 
   readonly property real collapsedHeight: 32
   readonly property real baseRadius: collapsedHeight / 2
@@ -91,7 +98,28 @@ Item {
     repeat: true
     running: musicWidget.isPlaying
 
-    onTriggered: musicWidget.player?.positionChanged()
+    onTriggered: {
+      if (musicWidget.player)
+      musicWidget.player.positionChanged();
+    }
+  }
+
+  Process {
+    running: musicWidget.expanded && musicWidget.isPlaying
+    command: ["cava", "-p", Quickshell.shellPath("cava.conf")]
+
+    stdout: SplitParser {
+      splitMarker: "\n"
+
+      onRead: data => {
+        const values = data.trim().split(";").filter(value => value.length > 0).map(
+          value => Math.max(0, Math.min(1, Number(value) / 100))
+        );
+
+        if (values.length > 0)
+        musicWidget.cavaLevels = values;
+      }
+    }
   }
 
   Rectangle {
@@ -412,8 +440,61 @@ Item {
               Layout.fillWidth: true
               spacing: 7
 
+              Item {
+                id: spectrum
+
+                Layout.fillWidth: true
+                Layout.preferredHeight: 12
+                clip: true
+                transform: Translate { y: 20 }
+
+                Rectangle {
+                  anchors.left: parent.left
+                  anchors.bottom: parent.bottom
+                  width: parent.width
+                  height: 2
+                  radius: 1
+                  color: RootDir.Theme.fgMuted
+                  opacity: 0.25
+
+                  Rectangle {
+                    width: parent.width * musicWidget.progress
+                    height: parent.height
+                    radius: parent.radius
+                    color: RootDir.Theme.accentHover
+                  }
+                }
+
+                Repeater {
+                  model: musicWidget.cavaLevels.length
+
+                  delegate: Item {
+                    required property int index
+
+                    width: spectrum.width / musicWidget.cavaLevels.length
+                    height: spectrum.height
+                    x: index * width
+
+                    Rectangle {
+                      anchors.horizontalCenter: parent.horizontalCenter
+                      anchors.bottom: parent.bottom
+                      width: parent.width * 0.62
+                      height: Math.max(
+                        2,
+                        musicWidget.cavaLevels[index] * (parent.height - 2)
+                      )
+                      radius: 1
+                      color: index / musicWidget.cavaLevels.length < musicWidget.progress
+                      ? RootDir.Theme.accentHover
+                      : Qt.darker(RootDir.Theme.accentHover, 2.3)
+                    }
+                  }
+                }
+              }
+
               RowLayout {
                 Layout.fillWidth: true
+                transform: Translate { y: 20 }
 
                 Text {
                   text: musicWidget.player
@@ -441,22 +522,6 @@ Item {
                   color: RootDir.Theme.fgMuted
                   font.family: RootDir.Fonts.text
                   font.pixelSize: 10
-                }
-              }
-
-              Rectangle {
-                Layout.fillWidth: true
-                Layout.preferredHeight: 3
-
-                radius: 2
-                color: RootDir.Theme.fgMuted
-                opacity: 0.25
-
-                Rectangle {
-                  width: parent.width * musicWidget.progress
-                  height: parent.height
-                  radius: parent.radius
-                  color: RootDir.Theme.accentHover
                 }
               }
 

@@ -11,4 +11,5 @@ fontconfig
 hyprpaper
 hyprshot
 kitty
+cava
 nautilus
