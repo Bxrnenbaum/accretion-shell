@@ -4,9 +4,6 @@ return {
 	apps = {
 		terminal = "kitty",
 		fileManager = "nautilus",
-		menu = "rofi -show drun",
-		menuRun = "rofi -show run",
-		menuMode = "rofi -show combi -combi-modes 'drun,run' -modes 'combi' -combi-hide-mode-prefix",
 	},
 
 	monitors = {
@@ -40,6 +37,11 @@ return {
 			force_no_accel = true,
 			touchpad = { natural_scroll = true },
 		},
+
+		cursor = {
+			no_hardware_cursor = false
+			-- enable this if you experience your cursor flickering
+		}
 	},
 
 	devices = {
