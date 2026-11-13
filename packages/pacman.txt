@@ -2,9 +2,8 @@ hyprland
 hyprlock
 hypridle
 quickshell
-rofi
+qt6-5compat
 fontconfig
-hyprpaper
 hyprshot
 kitty
 cava

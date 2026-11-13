@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Nodes;
@@ -10,16 +9,14 @@ public static class Config
 
     private static readonly (string Output, string Template)[] ThemeFiles =
     [
-        (".config/qs/Theme.qml", "templates/Theme.qml.tpl"),
-        (".config/rofi/colors.rasi", "templates/colors.rasi.tpl"),
+        (".config/qs/Theme.json", "templates/Theme.json.tpl"),
         (".config/hypr/hyprlandTheme.lua", "templates/hyprlandTheme.lua.tpl"),
-        (".config/hypr/hyprpaper.conf", "templates/hyprpaper.conf.tpl"),
         (".config/hypr/hyprlockTheme.conf", "templates/hyprlockTheme.conf.tpl"),
         (".config/kitty/kitty.conf", "templates/kitty.conf.tpl")
     ];
 
     private static readonly Regex PlaceholderRegex =
-        new(@"\{\{(color|rgb|pango|image|theme)\.([a-zA-Z0-9_]+)\}\}", RegexOptions.Compiled);
+        new(@"\{\{(json|color|rgb|pango|image|theme)\.([a-zA-Z0-9_.]+)\}\}", RegexOptions.Compiled);
 
     private static readonly Regex HexColorRegex =
         new(@"^#[0-9a-fA-F]{6}$", RegexOptions.Compiled);
@@ -132,6 +129,8 @@ public static class Config
 
                 return kind switch
                 {
+                    "json" => ResolveJsonPlaceholder(
+                        name, colors, images, hasImages, cliDir, displayName),
                     "color" => ResolveColor(colors, name),
                     "rgb" => $"rgb({ResolveColor(colors, name)[1..]})",
                     "pango" => $"##{ResolveColor(colors, name)[1..]}",
@@ -145,99 +144,57 @@ public static class Config
             if (outputDirectory is not null)
                 Directory.CreateDirectory(outputDirectory);
 
-            File.WriteAllText(outputPath, content);
+            WriteIfChanged(outputPath, content);
             Console.WriteLine($"Applied: {outputPath}");
-        }
-
-        if (hasImages)
-        {
-            string wallpaper = ResolveImage(
-                images, hasImages, "wallpaper", cliDir);
-
-            ApplyWallpaper(wallpaper);
         }
 
         Console.WriteLine("Theme applied successfully.");
     }
 
-    private static void ApplyWallpaper(string wallpaperPath)
+    private static string ResolveJsonPlaceholder(
+        string name,
+        JsonElement colors,
+        JsonElement images,
+        bool hasImages,
+        string baseDir,
+        string displayName)
     {
-        if (FindExecutable("wallr") is not null)
+        int separator = name.IndexOf('.');
+        if (separator <= 0 || separator == name.Length - 1)
+            throw new InvalidOperationException($"Invalid JSON placeholder: {name}");
+
+        string kind = name[..separator];
+        string key = name[(separator + 1)..];
+
+        string value = kind switch
         {
-            Console.WriteLine("Using Wallr for wallpaper transitions.");
-
-            RunCommand("wallr", [
-                "set",
-                wallpaperPath,
-                "-e", "fade",
-                "-d", "1200ms"
-            ]);
-
-            return;
-        }
-
-        if (FindExecutable("hyprctl") is not null)
-        {
-            Console.WriteLine("Wallr not found; using Hyprpaper.");
-
-            RunCommand("hyprctl", [
-                "hyprpaper",
-                "reload",
-                "," + wallpaperPath
-            ]);
-
-            return;
-        }
-
-        Console.WriteLine(
-            "Warning: neither Wallr nor hyprctl was found; " +
-            "the wallpaper config was generated but not applied.");
-    }
-
-    private static string? FindExecutable(string name)
-    {
-        string? path = Environment.GetEnvironmentVariable("PATH");
-
-        if (string.IsNullOrWhiteSpace(path))
-            return null;
-
-        foreach (string directory in path.Split(
-            Path.PathSeparator,
-            StringSplitOptions.RemoveEmptyEntries))
-        {
-            string candidate = Path.Combine(directory, name);
-
-            if (File.Exists(candidate))
-                return candidate;
-        }
-
-        return null;
-    }
-
-    private static void RunCommand(
-        string executable,
-        IEnumerable<string> arguments)
-    {
-        var startInfo = new ProcessStartInfo
-        {
-            FileName = executable,
-            UseShellExecute = false
+            "color" => ResolveColor(colors, key),
+            "image" => ResolveImage(images, hasImages, key, baseDir),
+            "theme" when key == "name" => displayName,
+            _ => throw new InvalidOperationException($"Unknown JSON placeholder: {name}")
         };
 
-        foreach (string argument in arguments)
-            startInfo.ArgumentList.Add(argument);
-
-        using Process process = Process.Start(startInfo)
-            ?? throw new InvalidOperationException(
-                $"Failed to start {executable}.");
-
-        process.WaitForExit();
-
-        if (process.ExitCode != 0)
-            Console.WriteLine(
-                $"Warning: {executable} exited with code {process.ExitCode}.");
+        return JsonSerializer.Serialize(value);
     }
 
+    private static void WriteIfChanged(string path, string content)
+    {
+        if (File.Exists(path) && File.ReadAllText(path) == content)
+            return;
+
+        string temporaryPath = path + "." + Guid.NewGuid().ToString("N") + ".tmp";
+
+        try
+        {
+            File.WriteAllText(temporaryPath, content);
+            File.Move(temporaryPath, path, overwrite: true);
+        }
+        finally
+        {
+            if (File.Exists(temporaryPath))
+                File.Delete(temporaryPath);
+        }
+    }
 
     private static string ResolveColor(JsonElement colors, string name)
     {

@@ -59,15 +59,15 @@ for name, curve in pairs({
 end
 
 for _, animation in ipairs({
-	{ leaf = "windowsIn", enabled = true, speed = 2, bezier = "fluent_decel", style = "slidefadevert 30%" },
-	{ leaf = "windowsOut", enabled = true, speed = 2, bezier = "fluent_decel", style = "slidefadevert 30%" },
-	{ leaf = "windowsMove", enabled = true, speed = 2, bezier = "fluent_decel", style = "slidefadevert 30%" },
-	{ leaf = "fade", enabled = true, speed = 3, bezier = "fluent_decel" },
-	{ leaf = "fadeLayersIn", enabled = false },
-	{ leaf = "fadeLayersOut", enabled = false },
-	{ leaf = "border", enabled = false },
-	{ leaf = "layers", enabled = true, speed = 3, bezier = "fluent_decel", style = "slidefadevert 30%" },
-	{ leaf = "workspaces", enabled = true, speed = 3, bezier = "fluent_decel", style = "slidefade 30%" },
+	{ leaf = "windowsIn",        enabled = true, speed = 2, bezier = "fluent_decel", style = "slidefadevert 30%" },
+	{ leaf = "windowsOut",       enabled = true, speed = 2, bezier = "fluent_decel", style = "slidefadevert 30%" },
+	{ leaf = "windowsMove",      enabled = true, speed = 2, bezier = "fluent_decel", style = "slidefadevert 30%" },
+	{ leaf = "fade",             enabled = true, speed = 3, bezier = "fluent_decel" },
+	{ leaf = "fadeLayersIn",     enabled = false },
+	{ leaf = "fadeLayersOut",    enabled = false },
+	{ leaf = "border",           enabled = false },
+	{ leaf = "layers",           enabled = true, speed = 3, bezier = "fluent_decel", style = "slidefadevert 30%" },
+	{ leaf = "workspaces",       enabled = true, speed = 3, bezier = "fluent_decel", style = "slidefade 30%" },
 	{ leaf = "specialWorkspace", enabled = true, speed = 3, bezier = "fluent_decel", style = "slidefade 30%" },
 }) do
 	hl.animation(animation)
@@ -191,8 +191,8 @@ hl.bind(
 )
 hl.bind(mainMod .. " + E", hl.dsp.exec_cmd(L.apps.fileManager))
 hl.bind(mainMod .. " + V", hl.dsp.window.float({ action = "toggle" }))
-hl.bind(mainMod .. " + T", hl.dsp.exec_cmd(L.apps.menuRun))
-hl.bind(mainMod .. " + R", hl.dsp.exec_cmd(L.apps.menuMode))
+hl.bind(mainMod .. " + T", hl.dsp.exec_cmd("qs ipc -p ~/.config/qs call appLauncher showCommands"))
+hl.bind(mainMod .. " + R", hl.dsp.exec_cmd("qs ipc -p ~/.config/qs call appLauncher showApplications"))
 hl.bind(mainMod .. " + J", hl.dsp.layout("togglesplit"))
 hl.bind(mainMod .. " + L", hl.dsp.exec_cmd("hyprlock"))
 hl.bind(mainMod .. " + K", hl.dsp.exec_cmd("hyprctl kill"))

@@ -6,13 +6,10 @@ import Quickshell.Hyprland
 import Quickshell.Io
 
 Item {
-    // ---- active connection name: event-driven instead of polling ----
-
     id: wifiWidget
 
     readonly property real hPadding: 16
     property real bodyWidth: expanded ? 240 : label.implicitWidth + hPadding * 2
-    property string connectionName: ""
     property bool expanded: false
     // keeps the panel alive while the collapse animation plays
     property bool panelActive: false
@@ -38,7 +35,6 @@ Item {
     readonly property color accent: RootDir.Theme.accent
     readonly property string fontFamily: RootDir.Fonts.text
 
-    // ---- helpers to reach fields inside the lazily-loaded panel ----
     function clearPrompt() {
         pendingSsid = "";
         pendingEnterprise = false;
@@ -196,51 +192,6 @@ Item {
         onTriggered: wifiWidget.panelActive = false
     }
 
-    // single long-lived listener; fires only when NetworkManager reports a change
-    Process {
-        running: true
-        command: ["nmcli", "monitor"]
-
-        stdout: SplitParser {
-            onRead: netRefresh.restart()
-        }
-
-    }
-
-    // debounce bursts of events into one query
-    Timer {
-        id: netRefresh
-
-        interval: 400
-        onTriggered: netProc.running = true
-    }
-
-    // one plain nmcli call (no sh/grep/head/cut pipeline); parsed in JS
-    Process {
-        id: netProc
-
-        command: ["nmcli", "-t", "-f", "NAME,TYPE", "connection", "show", "--active"]
-        running: true
-
-        stdout: StdioCollector {
-            onStreamFinished: {
-                let name = "";
-                for (const line of text.split("\n")) {
-                    if (!line)
-                        continue;
-
-                    const f = wifiWidget.splitTerse(line);
-                    if (f[1] === "802-11-wireless" || f[1] === "802-3-ethernet") {
-                        name = f[0];
-                        break;
-                    }
-                }
-                wifiWidget.connectionName = name;
-            }
-        }
-
-    }
-
     Process {
         id: savedProc
 
@@ -289,7 +240,7 @@ Item {
                     wifiWidget.promptFor(wifiWidget.lastSsid, true);
 
             }
-            netRefresh.restart();
+            RootDir.Network.refresh();
             wifiWidget.refreshSaved();
             wifiWidget.scan();
         }
@@ -304,14 +255,6 @@ Item {
         id: portalProc
 
         command: ["sh", "-c", "sleep 2; [ \"$(nmcli networking connectivity check)\" = portal ] && xdg-open http://neverssl.com"]
-    }
-
-    // slow safety net in case `nmcli monitor` ever dies (once a minute, not every 5s)
-    Timer {
-        interval: 60000
-        running: true
-        repeat: true
-        onTriggered: netProc.running = true
     }
 
     HyprlandFocusGrab {
@@ -347,10 +290,9 @@ Item {
             color: wifiWidget.fg
             font.pixelSize: 14
             font.family: wifiWidget.fontFamily
-            text: wifiWidget.connectionName || "Disconnected"
+            text: RootDir.Network.connectionName || "Disconnected"
         }
 
-        // Expanded panel is only built while open (plus the collapse animation)
         Loader {
             id: panelLoader
 
@@ -397,9 +339,9 @@ Item {
                         hoverColor: wifiWidget.accent
                         fontFamily: wifiWidget.fontFamily
                         onClicked: {
-                            if (!wifiWidget.scanning) {
+                            if (!wifiWidget.scanning)
                                 wifiWidget.scan();
-                            }
+
                         }
                     }
 
@@ -593,7 +535,7 @@ Item {
     RootDir.ConcaveCorner {
         radius: wifiWidget.cornerRadius
         color: bg.color
-        mirrored: true
+        mirror.x: true
         x: 0
         y: 0
     }

@@ -619,7 +619,7 @@ Item {
   RootDir.ConcaveCorner {
     radius: musicWidget.cornerRadius
     color: bg.color
-    mirrored: true
+    mirror.x: true
 
     x: 0
     y: 0

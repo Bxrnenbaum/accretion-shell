@@ -1,8 +1,6 @@
-/.config/qs/Theme.qml
+/.config/qs/Theme.json
 /.config/qs/calendar-events.json
-/.config/rofi/colors.rasi
 /.config/hypr/hyprlandTheme.lua
-/.config/hypr/hyprpaper.conf
 /.config/hypr/hyprlockTheme.conf
 /.config/kitty/kitty.conf
 /.config/hypr/hyprlandLocal.lua

@@ -278,7 +278,7 @@ Item {
   RootDir.ConcaveCorner {
     radius: weatherWidget.cornerRadius
     color: bg.color
-    mirrored: true
+    mirror.x: true
     x: 0
     y: 0
   }

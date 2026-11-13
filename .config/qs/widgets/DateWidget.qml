@@ -469,7 +469,7 @@ Item {
   RootDir.ConcaveCorner {
     radius: dateWidget.cornerRadius
     color: bg.color
-    mirrored: true
+    mirror.x: true
     x: 0
     y: 0
   }

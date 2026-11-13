@@ -1,5 +1,5 @@
 # Accretion-shell
-> A shell containing a [Quickshell](https://quickshell.outfoxxed.me/) config replacing [Malachite-Quickshell](https://github.com/Bxrnenbaum/Malachite-Quickshell/), a config for rofi, kitty, hyprland, hypridle, hyprlock and hyprpaper aswell as a c# tool for managing themes, dependencies etc.
+> A shell containing a [Quickshell](https://quickshell.outfoxxed.me/) config replacing [Malachite-Quickshell](https://github.com/Bxrnenbaum/Malachite-Quickshell/), a config for rofi, kitty, hyprland, hypridle and hyprlock aswell as a c# tool for managing themes, dependencies etc.
 ---
 
 ## Screenshots
@@ -25,7 +25,7 @@
 ---
 
 https://github.com/user-attachments/assets/27adc953-6414-42ef-982a-9cf5c1d9cf48
->theme switching in action. wallr is used in this case, so wallpaper relading is smooth and instant
+>theme switching in action
 
 *All wallpapers have been made using blender*
 
@@ -58,9 +58,6 @@ accretion install
 accretion config apply
 ```
 
-> if wallr is installed, it will be automatically used, as it provides instant reloading and fading animations, which makes it the preferred alternative to hyprpaper. sadly it isnt available on every distro. replacing hyprpaper with wallr in hyprlandLocal.lua is recommended.
-
-
 **disclaimer:** accretion-cli does not know your monitor layout our your preference, so it creates a generic hyprlandLocal.lua file. it is strongly recommended to check it and atleast modify the monitor configuration and kb layout to your liking. this file is persistent after updateing using `accretion update` and while not be overwritten once created.
 The weather currently defaults to Vienna, modify latitude and longitude in `.config/qs/widgets/WeatherWidget.qml` 
 
@@ -77,12 +74,14 @@ Sometimes hyprland throws errors after updating, `hyprctl reload` should fix the
 - **SUPER + L**: Lock using hyprlock
 - **SUPER + K**: run hyprctl kill
 - **SUPER + F**: toggle fullscreen
-- **SUPER + R**: open rofi menu
-- **SUPER + T**: open rofi run menu to run bash commands
+- **SUPER + R**: open the Quickshell application launcher
+- **SUPER + T**: open the Quickshell Bash prompt
 - **SUPER + KP_\***: switch to workspaces 11-20
 - **SUPER + SHIFT + KP_\***: move a window to workspaces 11-20
 
 aswell as the default hyprland binds, if not overwritten.
+
+The launcher searches installed desktop applications and starts the selected app. The Bash prompt runs the entered command with `bash -lc`, use it for shell commands and scripts. Interactive terminal programs can be started by entering your terminal command, for example `kitty -e htop`. Press Enter to launch/run, Escape to close, and Tab to switch between Apps and Bash.
 
 ## License
 This project is licensed under the GNU General Public License v3.0 — see [LICENSE](LICENSE) for details.

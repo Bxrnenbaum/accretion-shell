@@ -23,8 +23,6 @@ return {
 		"wl-paste --type text --watch cliphist store",
 		"wl-paste --image --watch cliphist store",
 		"hyprpm reload -n",
-		"hyprpaper", --remove this line when using wallr
-    "$HOME/.local/bin/accretion config apply && $HOME/.local/bin/accretion config apply", --due to weird behavior when starting wallr-daemon (if exists), apply is called twice, once to start the daemon and once to set the wallpaper
 	},
 
 	env = {
