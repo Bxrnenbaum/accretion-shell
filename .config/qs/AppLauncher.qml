@@ -166,7 +166,7 @@ Item {
                     color: panelBackground.color
                     mirror.x: true
                     mirror.y: true
-                    x: 0
+                    x: 1
                     y: launcherPanel.height - radius
                 }
 
