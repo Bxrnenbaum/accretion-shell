@@ -29,10 +29,16 @@ https://github.com/user-attachments/assets/27adc953-6414-42ef-982a-9cf5c1d9cf48
 
 *All wallpapers have been made using blender*
 
+## Compatibility
+- **Arch** and derivatives: compatible (tested on Arch and EndeavourOS)
+- **Fedora**: mostly compatible (Hyprland is not officially supported, so enabling it through COPR is required)
+- **NixOS**: planned but untested
+- **OpenSUSE**: should be compatible (I could not get hyprland working. if you know how to correctly set up nvidia drivers on OpenSUSE lmk)
+
+> all testing environments currently run on x64 but except for OS availability, nothing should stop compatibility for ARM systems.  
 
 ## Installation
-in theory this project should be compatible with Arch, Fedora, NixOS and Opensuse. It is currently only tested on Arch/EndeavourOS (x64).
-.NET10.0 is required at the moment to build the project. binaries may come at a later point in time
+**.NET10.0 is required at the moment to build the project. binaries may come when I am motivated enough to play around with Github-actions**
 
 1. Run the bootstrap script:
 
@@ -40,26 +46,53 @@ in theory this project should be compatible with Arch, Fedora, NixOS and Opensus
 curl -fsSL https://raw.githubusercontent.com/Bxrnenbaum/accretion-shell/main/scripts/bootstrap.sh | bash
 ```
 
-2. Add the accretion c# utility to your path (bash only, for zsh for example replace `.bashrc` with `.zshrc`):
-
-```bash
-echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc && source ~/.bashrc
-```
-
-3. Install dependencies etc.:
+2. Install dependencies and link up configs:
 
 ```bash
 accretion install
 ```
 
-4. Generate the configs using the colors specified in `~/.local/share/accretion-shell/accretion-cli/theme.json` (you can modify this file to change the colors used in the system):
+3. Generate the configs using the colors specified in `~/.local/share/accretion-shell/accretion-cli/theme.json` (you can modify this file to change the colors used in the system):
 
 ```bash
 accretion config apply
 ```
 
-**disclaimer:** accretion-cli does not know your monitor layout our your preference, so it creates a generic hyprlandLocal.lua file. it is strongly recommended to check it and atleast modify the monitor configuration and kb layout to your liking. this file is persistent after updateing using `accretion update` and while not be overwritten once created.
-The weather currently defaults to Vienna, modify latitude and longitude in `.config/qs/widgets/WeatherWidget.qml` 
+**If the accretion command isnt available to you, try adding `.local/bin` to path:
+```bash
+echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc && source ~/.bashrc
+```
+> swap out `.bashrc` with `.zshrc` for example, if you dont use bash.
+
+
+### Operating system specific problems and solutions
+#### Fedora:
+- Hyprland isnt supported officially, so you have to enable it through COPR first:
+  ```bash
+  sudo dnf copr enable lionheartp/hyprland
+  ```
+  > note: `lionheartp/hyprland` worked best for me, you might want to try other repos if you experience problems with this one.
+
+- from personal testing ive experienced cursor flickering, setting `no_hardware_cursor = true` in `.config/hypr/hyprlandLocal.lua` fixed it for me
+
+#### OpenSUSE:
+- quickshell isnt available in the official repos. its easiest to add this repo before running `accretion install`:
+  ```bash
+  sudo zypper addrepo https://download.opensuse.org/repositories/home:AvengeMedia:danklinux/openSUSE_Tumbleweed/home:AvengeMedia:danklinux.repo
+  ```
+
+## Post install (Do not skip this)
+this repo comes with a generic hyprland base setup which serves to get you started, not to be a permanent solution. It is more than recommended to:
+- setup your monitors correctly
+- change your keyboard layout (default: us)
+in `.config/hypr/hyprlandLocal.lua`. this file will not be overwritten by updates and is used for device specific settings.
+
+the weather widget fetches data for vienna by default, so assuming you arent from vienna, you should consider changing your location like this:
+```bash
+accretion config location <lat> <lon>
+```
+> Note: we use a very modern and sophisticated coordinate system, so we dont have to deal with a geocoding API.
+
 
 ## Usage
 
