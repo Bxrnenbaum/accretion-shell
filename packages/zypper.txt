@@ -3,7 +3,7 @@ hyprland
 hyprlock
 hypridle
 quickshell
-qt6-qt5compat
+qt6-qt5compat-imports
 fontconfig
 hyprshot
 kitty
