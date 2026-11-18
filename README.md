@@ -1,5 +1,5 @@
 # Accretion-shell
-> A shell containing a [Quickshell](https://quickshell.outfoxxed.me/) config replacing [Malachite-Quickshell](https://github.com/Bxrnenbaum/Malachite-Quickshell/), a config for rofi, kitty, hyprland, hypridle and hyprlock aswell as a c# tool for managing themes, dependencies etc.
+> A shell containing a [Quickshell](https://quickshell.outfoxxed.me/) config replacing [Malachite-Quickshell](https://github.com/Bxrnenbaum/Malachite-Quickshell/), a config for kitty, hyprland, hypridle and hyprlock aswell as a c# tool for managing themes, dependencies etc.
 ---
 
 ## Screenshots
@@ -97,8 +97,49 @@ accretion config location <lat> <lon>
 ## Usage
 
 #### accretion-cli
-accretion-cli is a custom c# application used to install dependencies, update when a new version releases, apply changes to `theme.json` and switch between themes specified in `theme.json`. `accretion uninstall` removes all created symlinks and restores made backups of previous dotfiles, it **does not** delete the repo nor the accretion-cli tool.
-Sometimes hyprland throws errors after updating, `hyprctl reload` should fix them.
+
+accretion-cli is a c# tool made to manage (almost) everything accretion shell provides.
+
+##### Accretion-cli usage
+- **reload configs**
+  ```bash
+  accretion config apply
+  ```
+  > regenerates all linked up configs.
+
+- **change theme**
+  ```bash
+  accretion config theme <theme_name>
+  ```
+  > switch to a theme defined in `.local/share/accretion/accretion-cli/theme.json`.
+  > currently there are 4 predefined themes available, you can show them like this:
+  ```bash
+  accretion config theme
+  ```
+
+- **change location**
+  ```bash
+  accretion config location <lat> <lon>
+  ```
+  > changes the location used for the weather widget, might take a few minutes to apply.
+  
+- **setup symlinks and dependencies**
+  ```bash
+  accretion install
+  ```
+  > installs all needed dependencies and links up configs. it will backup existing configs beforehand.
+
+- **update**
+  ```bash
+  accretion update
+  ```
+  > pulls the repo and rebuilds the binary if necessary. it is recommended to sometimes check what changed in persistent files like hyprlandLocal.lua, as new features, fixes or similar wont affect untracked files.
+
+- **restore configs**
+  ```bash
+  accretion uninstall
+  ```
+  > removes all symlinks and restores backed up configs. the repo located in `.local/share/accretion-shell/` aswell as the accretion binary in `.local/bin/accretion` are not touched and have to be removed manually.
 
 
 #### currently the following keybinds are configured:
