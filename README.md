@@ -107,14 +107,15 @@ Sometimes hyprland throws errors after updating, `hyprctl reload` should fix the
 - **SUPER + L**: Lock using hyprlock
 - **SUPER + K**: run hyprctl kill
 - **SUPER + F**: toggle fullscreen
-- **SUPER + R**: open the Quickshell application launcher
-- **SUPER + T**: open the Quickshell Bash prompt
+- **SUPER + R**: open the (new and improved) Quickshell application launcher
+- **SUPER + T**: open the (also new and improved) Quickshell Bash prompt
 - **SUPER + KP_\***: switch to workspaces 11-20
 - **SUPER + SHIFT + KP_\***: move a window to workspaces 11-20
 
 aswell as the default hyprland binds, if not overwritten.
 
-The launcher searches installed desktop applications and starts the selected app. The Bash prompt runs the entered command with `bash -lc`, use it for shell commands and scripts. Interactive terminal programs can be started by entering your terminal command, for example `kitty -e htop`. Press Enter to launch/run, Escape to close, and Tab to switch between Apps and Bash.
+The app launcher searches through installed apps and sorts them by recent (for not yet runned applications it sorts alphabetically). the command prompt can be used to run shell commands with simple autocompletion built in. Runned commands show output in a window below. 
+> **warning:** running commands like `tree /` or `cat /dev/urandom` is not recommended as it can freeze quickshell (probably due to filling the output window up to quickly) and make your device virtually unusable for a few seconds to a minute due to it capturing your keyboard. `tree /` increased cpu usage (quickshell only) up to 90-95% (tested on AMD Ryzen 5 5600x).
 
 ## License
 This project is licensed under the GNU General Public License v3.0 — see [LICENSE](LICENSE) for details.
