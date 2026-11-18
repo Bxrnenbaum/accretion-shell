@@ -148,19 +148,15 @@ accretion-cli is a c# tool made to manage (almost) everything accretion shell pr
 - **SUPER + L**: Lock using hyprlock
 - **SUPER + K**: run hyprctl kill
 - **SUPER + F**: toggle fullscreen
-- **SUPER + R**: open the Quickshell application launcher
-- **SUPER + T**: open the Quickshell Bash prompt
+- **SUPER + R**: open the (new and improved) Quickshell application launcher
+- **SUPER + T**: open the (also new and improved) Quickshell Bash prompt
 - **SUPER + KP_\***: switch to workspaces 11-20
 - **SUPER + SHIFT + KP_\***: move a window to workspaces 11-20
 
 aswell as the default hyprland binds, if not overwritten.
 
-
-## Thanks to
-- [Open-Meteo](https://open-meteo.com/) for providing weather data.
-- [Github Monaspace](https://github.com/githubnext/monaspace?tab=OFL-1.1-1-ov-file.
-
-
+The app launcher searches through installed apps and sorts them by recent (for not yet runned applications it sorts alphabetically). the command prompt can be used to run shell commands with simple autocompletion built in. Runned commands show output in a window below. 
+> **warning:** running commands like `tree /` or `cat /dev/urandom` is not recommended as it can freeze quickshell (probably due to filling the output window up to quickly) and make your device virtually unusable for a few seconds to a minute due to it capturing your keyboard. `tree /` increased cpu usage (quickshell only) up to 90-95% (tested on AMD Ryzen 5 5600x).
 
 ## License
 This project is licensed under the GNU General Public License v3.0 — see [LICENSE](LICENSE) for details.
