@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 
 public static class Update
 {
@@ -60,37 +61,99 @@ public static class Update
         if (changed.Any(f => f.StartsWith("fonts/")))
             Install.RefreshFontCache();
 
-        if (changed.Contains("packages.txt"))
-            Console.WriteLine("Note: packages.txt changed. Run 'accretion install' to install new dependencies.");
+        if (changed.Any(f => f.StartsWith("packages/") && f.EndsWith(".txt")))
+            Console.WriteLine("Note: the package list changed. Run 'accretion install' to install new dependencies.");
 
-        if (changed.Any(f => f.StartsWith("accretion-cli/") && f.EndsWith(".cs")))
+        bool cliSourceChanged = changed.Any(f =>
+            f.StartsWith("accretion-cli/", StringComparison.Ordinal) &&
+            (f.EndsWith(".cs", StringComparison.OrdinalIgnoreCase) ||
+             f.EndsWith(".csproj", StringComparison.OrdinalIgnoreCase)));
+
+        if (cliSourceChanged)
         {
-            Console.Write("Rebuild the CLI binary now? [Y/n] ");
-            string? answer = Console.ReadLine();
+            Console.WriteLine("CLI source changed. Rebuilding the binary...");
 
-            if (string.IsNullOrWhiteSpace(answer) || answer.Equals("y", StringComparison.OrdinalIgnoreCase) || answer.Equals("yes", StringComparison.OrdinalIgnoreCase))
+            try
             {
-                string projectPath = Path.Combine(repoRoot, "accretion-cli", "accretion-cli.csproj");
-                var build = RunProcess("dotnet", "build", projectPath, "--nologo");
-
-                if (build.Code != 0)
-                {
-                    Console.WriteLine("CLI rebuild failed.");
-                    if (!string.IsNullOrWhiteSpace(build.Err))
-                        Console.WriteLine(build.Err);
-                }
-                else
-                {
-                    Console.WriteLine("CLI rebuilt successfully.");
-                }
+                RebuildCli(repoRoot);
+                Console.WriteLine("CLI binary rebuilt successfully.");
             }
-            else
+            catch (Exception ex)
             {
-                Console.WriteLine("Skipping CLI rebuild. Run 'dotnet build accretion-cli/accretion-cli.csproj' later to update the binary.");
+                Console.WriteLine($"CLI rebuild failed: {ex.Message}");
             }
         }
 
         Console.WriteLine("Update complete. Restart Quickshell/Hyprland components to pick up changes.");
+    }
+
+    private static void RebuildCli(string repoRoot)
+    {
+        string rid = RuntimeInformation.ProcessArchitecture switch
+        {
+            Architecture.X64 => "linux-x64",
+            Architecture.Arm64 => "linux-arm64",
+            _ => throw new InvalidOperationException(
+                $"Unsupported architecture: {RuntimeInformation.ProcessArchitecture}")
+        };
+
+        string projectPath = Path.Combine(repoRoot, "accretion-cli", "accretion-cli.csproj");
+        string publishDirectory = Path.Combine(
+            Path.GetTempPath(),
+            $"accretion-cli-publish-{Guid.NewGuid():N}");
+
+        Directory.CreateDirectory(publishDirectory);
+
+        try
+        {
+            var publish = RunProcess(
+                "dotnet",
+                "publish",
+                projectPath,
+                "-c", "Release",
+                "-r", rid,
+                "--self-contained", "true",
+                "-p:PublishSingleFile=true",
+                "-p:IncludeNativeLibrariesForSelfExtract=true",
+                "--nologo",
+                "-o", publishDirectory);
+
+            if (publish.Code != 0)
+            {
+                throw new InvalidOperationException(
+                    string.IsNullOrWhiteSpace(publish.Err)
+                        ? "dotnet publish failed."
+                        : publish.Err);
+            }
+
+            string publishedBinary = Path.Combine(publishDirectory, "accretion-cli");
+            if (!File.Exists(publishedBinary))
+                throw new InvalidOperationException(
+                    $"Published CLI binary was not found at {publishedBinary}.");
+
+            string home = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+            string binDirectory = Path.Combine(home, ".local", "bin");
+            string installedBinary = Path.Combine(binDirectory, "accretion");
+
+            Directory.CreateDirectory(binDirectory);
+            File.Copy(publishedBinary, installedBinary, overwrite: true);
+
+            if (!OperatingSystem.IsWindows())
+            {
+                File.SetUnixFileMode(
+                    installedBinary,
+                    UnixFileMode.UserRead | UnixFileMode.UserWrite | UnixFileMode.UserExecute |
+                    UnixFileMode.GroupRead | UnixFileMode.GroupExecute |
+                    UnixFileMode.OtherRead | UnixFileMode.OtherExecute);
+            }
+
+            Console.WriteLine($"Installed rebuilt CLI at {installedBinary}");
+        }
+        finally
+        {
+            if (Directory.Exists(publishDirectory))
+                Directory.Delete(publishDirectory, recursive: true);
+        }
     }
 
     private static (int Code, string Out, string Err) Git(string repo, params string[] args)
