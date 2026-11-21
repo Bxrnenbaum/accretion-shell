@@ -94,6 +94,17 @@ accretion config location <lat> <lon>
 > Note: we use a very modern and sophisticated coordinate system, so we dont have to deal with a geocoding API.
 
 
+## Optional
+I personally like to have my workspace order consistent, so workspaces 1-10 (number row) are always on my primary monitor and workspaces 11-20 (keypad) are always on my secondary. copy this into your hyprlandLocal.lua to achieve this:
+```lua
+workspaceRanges = {
+		{ first = 1, last = 10, monitor = "DP-2" },
+		{ first = 11, last = 20, monitor = "DP-3" },
+	},
+```
+> swap out monitor names accordingly.
+
+
 ## Usage
 
 #### accretion-cli
